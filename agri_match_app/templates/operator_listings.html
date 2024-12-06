@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Operator Listings</h1>
+    
+    <div class="row">
+        {% for listing in operator_list %}
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-lg border-light">
+                    <img src="{{ listing.profile_picture.url }}" class="card-img-top" alt="{{ listing.name }} Profile Picture" style="height: 250px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ listing.name }}</h5>
+                        <p class="card-text">{{ listing.bio|truncatewords:15 }}</p>
+                        <p class="text-muted">Skills: {{ listing.skills }}</p>
+                        <p class="text-muted">Hourly Rate: KSh {{ listing.hourly_rate }}</p>
+                        <a href="{% url 'listing_detail' listing.id %}" class="btn btn-success btn-block">Hire This Operator</a>
+                    </div>
+                    <div class="card-footer text-muted">
+                        <small>Located in: {{ listing.location }}</small>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="alert alert-warning" role="alert">
+                    No operator listings available at the moment.
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

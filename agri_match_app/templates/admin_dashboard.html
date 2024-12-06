@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container-fluid">
+        <!-- Admin Dashboard Heading -->
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="my-4">Welcome to the Admin Dashboard</h1>
+                <p class="lead">Manage and monitor your platform activities.</p>
+            </div>
+        </div>
+
+        <!-- Dashboard Stats Row -->
+        <div class="row">
+            <!-- Card 1: Total Machinery Listings -->
+            <div class="col-md-3">
+                <div class="card text-white bg-primary mb-3">
+                    <div class="card-header">Total Machinery Listings</div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ machinery_count }}</h5>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Total Operators -->
+            <div class="col-md-3">
+                <div class="card text-white bg-success mb-3">
+                    <div class="card-header">Total Operators</div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ operator_count }}</h5>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: Total Users -->
+            <div class="col-md-3">
+                <div class="card text-white bg-warning mb-3">
+                    <div class="card-header">Total Users</div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ user_count }}</h5>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4: Total Rentals -->
+            <div class="col-md-3">
+                <div class="card text-white bg-info mb-3">
+                    <div class="card-header">Total Rentals</div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ rental_count }}</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activities Section -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        Recent Activities
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group">
+                            <li class="list-group-item">New Machinery Listing created by <strong>User123</strong></li>
+                            <li class="list-group-item">Operator Listing updated by <strong>User456</strong></li>
+                            <li class="list-group-item">New Rental request for <strong>Tractor</strong> by <strong>User789</strong></li>
+                            <li class="list-group-item">New user signed up: <strong>User101</strong></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Links Section -->
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        Quick Links
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group">
+                            <li class="list-group-item"><a href="{% url 'create_machinery_listing' %}">Create Machinery Listing</a></li>
+                            <li class="list-group-item"><a href="{% url 'create_operator_listing' %}">List as an Operator</a></li>
+                            <li class="list-group-item"><a href="#">Manage Users</a></li>
+                            <li class="list-group-item"><a href="#">View Rental Transactions</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Notifications (Optional) -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        Notifications
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group">
+                            <li class="list-group-item text-danger">You have 2 new rental requests.</li>
+                            <li class="list-group-item text-warning">Operator profile needs to be updated.</li>
+                            <li class="list-group-item text-success">3 new users have signed up today.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: Settings (Optional) -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        Settings
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group">
+                            <li class="list-group-item"><a href="#">Site Settings</a></li>
+                            <li class="list-group-item"><a href="#">Manage Payment Methods</a></li>
+                            <li class="list-group-item"><a href="#">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}

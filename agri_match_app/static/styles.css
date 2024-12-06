@@ -1,0 +1,130 @@
+/* Global styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+/* Navbar styles */
+.navbar {
+    margin-bottom: 20px;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+/* Card and Form styles */
+.card {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.card-body {
+    padding: 30px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+/* Buttons */
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: #fff;
+    font-size: 16px;
+    padding: 12px;
+    border-radius: 5px;
+    width: 100%;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+/* Form Input Fields */
+input[type="text"], input[type="number"], textarea, input[type="file"] {
+    width: 100%;
+    padding: 12px;
+    margin-top: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+
+textarea {
+    resize: vertical;
+}
+
+/* Image Preview */
+#imagePreview {
+    max-height: 300px;
+    object-fit: cover;
+    margin-top: 15px;
+}
+
+/* Labels and Helper Text */
+label {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+small {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+/* Success/Warning/Error Alerts */
+.alert {
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.alert-success {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.alert-danger {
+    background-color: #db4437;
+    color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .navbar-nav {
+        text-align: center;
+        width: 100%;
+    }
+
+    .navbar-nav .nav-item {
+        margin: 10px 0;
+    }
+
+    .container {
+        padding: 0 15px;
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar-brand {
+        font-size: 1.25rem;
+    }
+}
+
+/* Additional Improvements */
+h1, h2, h3, h4, h5 {
+    font-weight: bold;
+    color: #333;
+}
+
+p {
+    line-height: 1.6;
+    font-size: 1.1rem;
+}

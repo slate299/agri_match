@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center text-success mb-4">Machinery Listings</h2>
+
+    <div class="row">
+        {% for listing in listings %}
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+                <img src="{{ listing.image.url }}" class="card-img-top" alt="Image of {{ listing.make }} {{ listing.model }}">
+                <div class="card-body">
+                    <h5 class="card-title text-success">{{ listing.make }} {{ listing.model }}</h5>
+                    <p class="card-text">{{ listing.description|truncatewords:20 }}</p>
+                    <p class="text-muted">Price per day: KSh {{ listing.price_per_day }}</p>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'machinery_listing_detail' listing.id %}" class="btn btn-info">View Details</a>
+                        <form action="{% url 'add_to_wishlist' listing.id %}" method="POST">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-warning">
+                                <i class="bi bi-heart"></i> Add to Wishlist
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center col-12">No machinery listings available at the moment.</p>
+        {% endfor %}
+    </div>
+
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            <li class="page-item {% if listings.has_previous %}enabled{% else %}disabled{% endif %}">
+                <a class="page-link" href="?page={{ listings.previous_page_number }}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link">{{ listings.number }}</span>
+            </li>
+            <li class="page-item {% if listings.has_next %}enabled{% else %}disabled{% endif %}">
+                <a class="page-link" href="?page={{ listings.next_page_number }}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+{% endblock %}

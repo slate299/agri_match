@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="text-center">List as an Operator</h2>
+<form method="POST" enctype="multipart/form-data" class="mt-4">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="name">Operator Name</label>
+        <input type="text" name="name" id="name" class="form-control" required>
+    </div>
+
+    <div class="form-group">
+        <label for="bio">Bio/Description</label>
+        <textarea name="bio" id="bio" class="form-control" rows="4" placeholder="Describe your skills and experience as an operator" required></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="hourly_rate">Hourly Rate (in USD)</label>
+        <input type="number" name="hourly_rate" id="hourly_rate" class="form-control" step="0.01" required>
+    </div>
+
+    <div class="form-group">
+        <label for="profile_picture">Profile Picture (optional)</label>
+        <input type="file" name="profile_picture" id="profile_picture" class="form-control-file">
+    </div>
+
+    <button type="submit" class="btn btn-success btn-block">Submit Listing</button>
+</form>
+
+{% endblock %}

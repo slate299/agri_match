@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-center my-4">Create a Machinery Listing</h2>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg rounded-lg">
+                <div class="card-body">
+                    <h4 class="mb-4 text-center">Fill in the details to create your listing</h4>
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <!-- Title Input -->
+                        <div class="form-group">
+                            <label for="title" class="font-weight-bold">Title</label>
+                            <input type="text" class="form-control" id="title" name="title" required>
+                            <small id="titleHelp" class="form-text text-muted">Choose a clear and descriptive title for your machinery.</small>
+                        </div>
+
+                        <!-- Description Input -->
+                        <div class="form-group">
+                            <label for="description" class="font-weight-bold">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
+                            <small id="descHelp" class="form-text text-muted">Provide detailed information about the machinery (e.g., condition, usage, etc.).</small>
+                        </div>
+
+                        <!-- Price Input -->
+                        <div class="form-group">
+                            <label for="price" class="font-weight-bold">Price per Day (KSh)</label>
+                            <input type="number" class="form-control" id="price" name="price" required>
+                            <small id="priceHelp" class="form-text text-muted">Enter the price you want to charge per day in KSh.</small>
+                        </div>
+
+                        <!-- Image Upload -->
+                        <div class="form-group">
+                            <label for="image" class="font-weight-bold">Upload Image</label>
+                            <input type="file" class="form-control-file" id="image" name="image" accept="image/*" onchange="previewImage(event)">
+                            <small id="imageHelp" class="form-text text-muted">Upload a clear image of the machinery for better visibility.</small>
+                            <div class="mt-2">
+                                <img id="imagePreview" src="#" alt="Image Preview" style="max-width: 100%; display: none;">
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-success btn-block mt-4">Create Listing</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

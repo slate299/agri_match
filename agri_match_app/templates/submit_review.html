@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Submit a Review for {{ listing.title }}</h2>
+
+    {% if existing_review %}
+        <div class="alert alert-info">
+            <p>You have already submitted a review for this listing. Here is your previous review:</p>
+            <p><strong>Rating:</strong> {{ existing_review.rating }} stars</p>
+            <p><strong>Review:</strong> {{ existing_review.comment }}</p>
+        </div>
+    {% endif %}
+
+    <form method="POST" class="mt-4">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="rating">Rating</label>
+            <select name="rating" id="rating" class="form-control" required>
+                <option value="">Select Rating</option>
+                <option value="1">1 Star</option>
+                <option value="2">2 Stars</option>
+                <option value="3">3 Stars</option>
+                <option value="4">4 Stars</option>
+                <option value="5">5 Stars</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="comment">Your Review</label>
+            <textarea name="comment" id="comment" rows="5" class="form-control" placeholder="Write your review here..." required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Submit Review</button>
+    </form>
+</div>
+{% endblock %}

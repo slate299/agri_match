@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container mt-5">
+        <!-- Section: Introduction -->
+        <div class="text-center">
+            <h1 class="display-4">About Agri-Match</h1>
+            <p class="lead">Connecting Agricultural Services and Products for a Sustainable Future</p>
+        </div>
+
+        <!-- Section: Mission and Vision -->
+        <div class="row mt-5">
+            <div class="col-md-6">
+                <h2 class="h3">Our Mission</h2>
+                <p>At Agri-Match, we aim to bridge the gap between agricultural machinery operators and those who need them, offering a seamless marketplace where farmers, businesses, and individuals can rent, hire, and collaborate. Our mission is driven by the passion to support agriculture and help create solutions for Zero Hunger (SDG 2).</p>
+            </div>
+            <div class="col-md-6">
+                <h2 class="h3">Our Vision</h2>
+                <p>We envision a world where agriculture thrives, where technology connects people and products, and where agricultural innovation is accessible to all. We strive to be a catalyst for positive change in the agricultural industry by providing easy-to-use platforms for renting machinery and hiring operators.</p>
+            </div>
+        </div>
+
+        <!-- Section: Our Values -->
+        <div class="mt-5">
+            <h3 class="text-center">Our Core Values</h3>
+            <div class="row">
+                <div class="col-md-4 text-center">
+                    <i class="fas fa-seedling fa-3x text-success"></i>
+                    <h4>Sustainability</h4>
+                    <p>We are committed to supporting sustainable farming practices and reducing waste by providing efficient agricultural resources.</p>
+                </div>
+                <div class="col-md-4 text-center">
+                    <i class="fas fa-users fa-3x text-primary"></i>
+                    <h4>Community</h4>
+                    <p>We believe in the power of collaboration and community. Our platform fosters partnerships between operators and clients.</p>
+                </div>
+                <div class="col-md-4 text-center">
+                    <i class="fas fa-cogs fa-3x text-warning"></i>
+                    <h4>Innovation</h4>
+                    <p>We embrace technological innovation, providing farmers with the tools and machinery they need to increase productivity.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section: Our Team -->
+        <div class="mt-5">
+            <h3 class="text-center">Meet Our Team</h3>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <img src="{% static 'images/team_member1.jpg' %}" class="card-img-top" alt="Team Member 1">
+                        <div class="card-body">
+                            <h5 class="card-title">John Doe</h5>
+                            <p class="card-text">Founder & CEO</p>
+                            <p class="card-text">John is passionate about empowering farmers and revolutionizing agricultural practices through technology. He leads Agri-Match with a vision to change the future of farming.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <img src="{% static 'images/team_member2.jpg' %}" class="card-img-top" alt="Team Member 2">
+                        <div class="card-body">
+                            <h5 class="card-title">Jane Smith</h5>
+                            <p class="card-text">COO</p>
+                            <p class="card-text">Jane works tirelessly to ensure that Agri-Match provides the best services to users and operators, and that our platform is user-friendly and efficient.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <img src="{% static 'images/team_member3.jpg' %}" class="card-img-top" alt="Team Member 3">
+                        <div class="card-body">
+                            <h5 class="card-title">Samuel Karanja</h5>
+                            <p class="card-text">CTO</p>
+                            <p class="card-text">Samuel oversees all technical aspects of Agri-Match, ensuring the platform is innovative, reliable, and scalable to meet the needs of the agricultural industry.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section: Call to Action -->
+        <div class="mt-5 text-center">
+            <h3>Join Us in Transforming Agriculture</h3>
+            <p>Become part of the Agri-Match community and help us achieve a world with better, more sustainable agricultural practices. Whether you're an operator or a farmer, there is a place for you with us!</p>
+            <a href="{% url 'account_signup' %}" class="btn btn-primary btn-lg">Sign Up Now</a>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container text-center mt-5">
+        <h2 class="display-4">Thank You!</h2>
+        <p class="lead">Your message has been successfully sent. We appreciate you reaching out!</p>
+
+        <div class="mt-4">
+            <h4>What happens next?</h4>
+            <p>Our team will get back to you as soon as possible. In the meantime, feel free to explore the following:</p>
+
+            <div class="row justify-content-center">
+                <div class="col-md-4">
+                    <a href="{% url 'home' %}" class="btn btn-primary btn-lg btn-block">Go to Homepage</a>
+                </div>
+                <div class="col-md-4">
+                    <a href="{% url 'about_us' %}" class="btn btn-secondary btn-lg btn-block">Learn About Us</a>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <h5>Still have questions?</h5>
+                <p>Visit our <a href="{% url 'contact_us' %}">Contact Us</a> page for additional inquiries or feedback.</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}
