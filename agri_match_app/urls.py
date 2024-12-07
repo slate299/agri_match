@@ -2,11 +2,13 @@ from django.urls import path
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.auth import views as auth_views
+
 urlpatterns = [
     # Authentication
     path('login/', views.login_view, name='account_login'),
     path('signup/', views.signup_view, name='account_signup'),
-
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     # Home and about pages
     path('', views.home, name='home'),
     path('about_us/', views.about_us, name='about_us'),
@@ -27,7 +29,7 @@ urlpatterns = [
     path('add_to_wishlist/<int:listing_id>/', views.add_to_wishlist, name='add_to_wishlist'),
 
     # Wishlist view
-    path('view_wishlist/', views.view_wishlist, name='view_wishlist'),
+    path('wishlist/', views.wishlist, name='wishlist'),
 
     # Rent or hire machinery or operators
     path('rent_or_hire/<int:listing_id>/', views.rent_or_hire, name='rent_or_hire'),
@@ -43,6 +45,5 @@ urlpatterns = [
 
     # Admin Dashboard (Only for superusers)
     path('admin_dashboard/', views.admin_dashboard, name='admin_dashboard'),
+    path('get-types/<int:category_id>/', views.get_types, name='get_types'),
 ]
-if settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

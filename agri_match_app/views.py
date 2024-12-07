@@ -1,12 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login
 from allauth.account.forms import SignupForm
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
-from .models import CustomUser, MachineryListing, OperatorListing, Wishlist, RentalTransaction, Review
-from .forms import ReviewForm, MachineryListingForm, OperatorListingForm
+from .models import CustomUser, MachineryListing, OperatorListing, Wishlist, RentalTransaction, Review, MachineryType
+from .forms import ReviewForm, MachineryListingForm, OperatorListingForm, CustomUserCreationForm
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib import messages
@@ -29,11 +29,11 @@ def signup_view(request):
     if request.method == 'POST':
         form = SignupForm(request.POST)
         if form.is_valid():
-            user = form.save()
+            user = form.save(request=request)
             login(request, user)
             return redirect('home')  # Redirect to the home page after successful signup
     else:
-        form = SignupForm()
+        form = CustomUserCreationForm()
     return render(request, 'account_signup.html', {'form': form})
 
 # Home view
@@ -80,7 +80,7 @@ def create_machinery_listing(request):
             machinery = form.save(commit=False)
             machinery.user = request.user
             machinery.save()
-            return redirect('home')  # Redirect to a success page or listings page
+            return redirect('machinery_listings')  # Redirect to a success page or listings page
     else:
         form = MachineryListingForm()
 
@@ -112,7 +112,7 @@ def add_to_wishlist(request, listing_id):
 
 # View wishlist
 @login_required
-def view_wishlist(request):
+def wishlist(request):
     wishlist = Wishlist.objects.get(user=request.user)
     return render(request, 'wishlist.html', {'wishlist': wishlist})
 
@@ -211,12 +211,14 @@ def admin_dashboard(request):
 
 # View for displaying all machinery listings
 def machinery_listings(request):
-    machinery_list = MachineryListing.objects.filter(listing_type='machinery')
+    machinery_list = MachineryListing.objects.all()  # No need for listing_type
     return render(request, 'machinery_listings.html', {'machinery_list': machinery_list})
 
 # View for displaying all operator listings
 def operator_listings(request):
-    operator_list = OperatorListing.objects.filter(listing_type='operator')
+    operator_list = OperatorListing.objects.all()  # No need for listing_type
     return render(request, 'operator_listings.html', {'operator_list': operator_list})
 
-
+def get_types(request, category_id):
+    types = MachineryType.objects.filter(category_id=category_id)
+    return JsonResponse(list(types.values('id', 'name')), safe=False)

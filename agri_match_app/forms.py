@@ -14,36 +14,49 @@ class CustomUserCreationForm(UserCreationForm):
         model = CustomUser
         fields = ['username', 'first_name', 'last_name', 'email', 'password1', 'password2']
 
-    def save(self, commit=True):
+    def save(self, request=None, commit=True):
         user = super().save(commit=False)
         user.is_lister = False  # Default to not being a lister
         user.is_renter = False  # Default to not being a renter
         user.is_wishlist_user = False  # Default to not being a wishlist user
+        if request:
+            pass
         if commit:
             user.save()
         return user
 
-
-# Updated Machinery Listing Form with Location
+# Machinery Listing
 class MachineryListingForm(forms.ModelForm):
+    category = forms.ModelChoiceField(
+        queryset=MachineryCategory.objects.all(),
+        label="Category",
+        required=True
+    )
+    type = forms.ModelChoiceField(
+        queryset=MachineryType.objects.none(),
+        label="Type",
+        required=True
+    )
+
     class Meta:
         model = MachineryListing
         fields = [
             'category', 'type', 'make', 'model', 'condition', 'description',
-            'image', 'price_per_day', 'available_from', 'available_to', 'location'  # Include location here
+            'price_per_day', 'available_from', 'available_to', 'location', 'image'
         ]
+        widgets = {
+            'available_from': forms.DateInput(attrs={'type': 'date'}),
+            'available_to': forms.DateInput(attrs={'type': 'date'}),
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['category'].queryset = MachineryCategory.objects.all()
-        self.fields['type'].queryset = MachineryType.objects.none()
-
         if 'category' in self.data:
             try:
                 category_id = int(self.data.get('category'))
                 self.fields['type'].queryset = MachineryType.objects.filter(category_id=category_id)
             except (ValueError, TypeError):
-                pass  # Invalid input; fallback to empty queryset
+                self.fields['type'].queryset = MachineryType.objects.none()
         elif self.instance.pk:
             self.fields['type'].queryset = self.instance.category.types.all()
 
