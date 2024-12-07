@@ -64,7 +64,7 @@
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'login' %}">Login</a>
+                            <a class="nav-link" href="{% url 'account_login' %}">Login</a>
                         </li>
                     {% endif %}
                 </ul>
@@ -76,34 +76,61 @@
         {% block content %}{% endblock %}
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-dark text-white py-4">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4">
-                    <h5>About Agri-Match</h5>
-                    <p>Your platform for connecting with the best machinery and operators in agriculture.</p>
-                </div>
-                <div class="col-md-4">
-                    <h5>Quick Links</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="{% url 'home' %}" class="text-white text-decoration-none">Home</a></li>
-                        <li><a href="{% url 'about_us' %}" class="text-white text-decoration-none">About Us</a></li>
-                        <li><a href="{% url 'contact_us' %}" class="text-white text-decoration-none">Contact Us</a></li>
-                        <li><a href="{% url 'login' %}" class="text-white text-decoration-none">Login</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-4">
-                    <h5>Contact Us</h5>
-                    <p>Phone: +254 799 862 291</p>
-                    <p>Email: <a href="mailto:natashahinga58@gmail.com" class="text-white">natashahinga58@gmail.com</a></p>
-                </div>
+   <!-- Footer -->
+<footer class="bg-dark text-white py-5">
+    <div class="container">
+        <div class="row">
+            <!-- About Section -->
+            <div class="col-md-4 mb-4 mb-md-0">
+                <h5>About Agri-Match</h5>
+                <p>Your platform for connecting with the best machinery and operators in agriculture.</p>
             </div>
-            <div class="text-center mt-3">
-                <p>&copy; 2024 Agri-Match. All rights reserved.</p>
+
+            <!-- Quick Links Section -->
+            <div class="col-md-4 mb-4 mb-md-0">
+                <h5>Quick Links</h5>
+                <ul class="list-unstyled">
+                    <li><a href="{% url 'home' %}" class="text-white text-decoration-none">Home</a></li>
+                    <li><a href="{% url 'about_us' %}" class="text-white text-decoration-none">About Us</a></li>
+                    <li><a href="{% url 'contact_us' %}" class="text-white text-decoration-none">Contact Us</a></li>
+                    <li><a href="{% url 'account_login' %}" class="text-white text-decoration-none">Login</a></li>
+                </ul>
+            </div>
+
+            <!-- Contact Section -->
+            <div class="col-md-4 mb-4 mb-md-0">
+                <h5>Contact Us</h5>
+                <p>Phone: +254 799 862 291</p>
+                <p>Email: <a href="mailto:natashahinga58@gmail.com" class="text-white">natashahinga58@gmail.com</a></p>
             </div>
         </div>
-    </footer>
+
+        <!-- Social Media & Company Info Section -->
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <p>&copy; 2024 Agri-Match | All Rights Reserved</p>
+                <p>Connecting Agricultural Services and Products for a Sustainable Future</p>
+            </div>
+
+            <!-- Social Media Icons -->
+            <div class="col-md-6 text-center text-md-right">
+                <h5>Follow Us</h5>
+                <div class="social-icons">
+                    <a href="#" class="text-white mx-2"><i class="fab fa-facebook fa-2x"></i></a>
+                    <a href="#" class="text-white mx-2"><i class="fab fa-twitter fa-2x"></i></a>
+                    <a href="#" class="text-white mx-2"><i class="fab fa-instagram fa-2x"></i></a>
+                    <a href="#" class="text-white mx-2"><i class="fab fa-linkedin fa-2x"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Links (Privacy Policy, Terms) -->
+        <div class="mt-3 text-center">
+            <a href="#" class="text-white">Privacy Policy</a> |
+            <a href="#" class="text-white">Terms of Service</a>
+        </div>
+    </div>
+</footer>
 
     <!-- Bootstrap Bundle JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AExxUcGFK5Kvk1e5BwS3uKAo4kMlY5q82CpXV+OMa2U13KnWGeGrm9KiSt5e6" crossorigin="anonymous"></script>

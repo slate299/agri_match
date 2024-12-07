@@ -1,10 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<h2 class="text-center my-5">Your Wishlist</h2>
 
-</body>
-</html>
+<div class="row">
+    {% for item in wishlist %}
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+                <img src="{% static 'images/default_image.png' %}" class="card-img-top" alt="Listing Image">
+                <div class="card-body">
+                    <h5 class="card-title">{{ item.title }}</h5>
+                    <p class="card-text">{{ item.description|truncatewords:20 }}</p>
+                    <a href="{% url 'rent_item' item.id %}" class="btn btn-outline-success">Rent Now</a>
+                    <a href="{% url 'remove_from_wishlist' item.id %}" class="btn btn-outline-danger">Remove</a>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <p>Your wishlist is empty.</p>
+    {% endfor %}
+</div>
+{% endblock %}

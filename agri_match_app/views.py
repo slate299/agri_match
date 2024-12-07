@@ -22,7 +22,7 @@ def login_view(request):
             return redirect('home')  # Redirect to the home page after successful login
     else:
         form = AuthenticationForm()
-    return render(request, 'registration/account_login.html', {'form': form})
+    return render(request, 'account_login.html', {'form': form})
 
 # Signup view
 def signup_view(request):
@@ -34,7 +34,7 @@ def signup_view(request):
             return redirect('home')  # Redirect to the home page after successful signup
     else:
         form = SignupForm()
-    return render(request, 'registration/account_signup.html', {'form': form})
+    return render(request, 'account_signup.html', {'form': form})
 
 # Home view
 def home(request):
