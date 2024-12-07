@@ -218,3 +218,5 @@ def machinery_listings(request):
 def operator_listings(request):
     operator_list = OperatorListing.objects.filter(listing_type='operator')
     return render(request, 'operator_listings.html', {'operator_list': operator_list})
+
+
