@@ -1,7 +1,7 @@
 /* Global Styles */
 body {
-    font-family: 'Roboto', sans-serif; /* Modern font for better readability */
-    background-color: #f8f9fa; /* Softer light background */
+    font-family: 'Roboto', sans-serif;
+    background-color: #f4f7fa; /* Softer off-white background */
     color: #333;
     margin: 0;
     padding: 0;
@@ -172,35 +172,125 @@ img {
     }
 }
 
-/* Footer Styles (Optional for Consistency) */
+/* Footer Styles */
 footer {
-    background-color: #006400;
+    background-color: #2a2a2a; /* Darker background for contrast */
     color: #fff;
-    padding: 20px 0;
+    padding: 30px 20px;
     text-align: center;
-    font-size: 0.9rem;
+    font-size: 1rem;
 }
 
 footer a {
-    color: #f1e50f;
+    color: #f1e50f; /* Accent Yellow */
     text-decoration: none;
 }
 
 footer a:hover {
     text-decoration: underline;
 }
-footer {
-    background-color: #2d2d2d;
-}
 
-footer a:hover {
-    color: #f1e50f;
-}
-
-.social-icons a {
+footer .social-icons a {
+    margin: 0 10px;
     transition: color 0.3s ease;
 }
 
-.social-icons a:hover {
-    color: #f1e50f;
+footer .social-icons a:hover {
+    color: #f1e50f; /* Accent Yellow on hover */
 }
+
+footer .social-icons {
+    margin-top: 15px;
+}
+
+/* Additional Custom Colors */
+.btn-primary {
+    background-color: #007bff; /* Blue accent for primary buttons */
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+.card {
+    background-color: #fafafa; /* Light grey cards */
+}
+
+.card-header {
+    background-color: #f1f1f1; /* Lighter grey for card header */
+    border-bottom: 2px solid #ddd;
+}
+
+/* Section Backgrounds */
+.section-light {
+    background-color: #f9f9f9; /* Light background for sections */
+}
+
+.section-dark {
+    background-color: #333; /* Dark background for sections */
+    color: #fff;
+}
+
+/* Carousel Item */
+.carousel-item {
+    position: relative;
+    height: 500px; /* Adjust height to fit your design */
+}
+
+.carousel-item img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+}
+
+/* Carousel Caption Styling */
+.carousel-caption {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: #fff; /* White text */
+    padding: 20px;
+    border-radius: 8px;
+    /* Removed the background */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Added text shadow for better readability */
+}
+
+.carousel-caption h5 {
+    font-size: 2.5rem; /* Larger heading size */
+    font-weight: bold;
+}
+
+.carousel-caption p {
+    font-size: 1.3rem; /* Slightly larger text for description */
+}
+
+/* Carousel Controls */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    filter: invert(1); /* Makes controls visible on dark background */
+}
+
+/* Carousel Container - Ensures it stays aligned */
+#heroCarousel {
+    max-width: 100%;
+    overflow: hidden;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .carousel-caption h5 {
+        font-size: 1.8rem; /* Adjust heading size on smaller screens */
+    }
+
+    .carousel-caption p {
+        font-size: 1rem; /* Adjust paragraph text size on smaller screens */
+    }
+
+    .carousel-item {
+        height: 400px; /* Adjust height for smaller screens */
+    }
+}
+
