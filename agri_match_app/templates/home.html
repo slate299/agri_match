@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content %}
 <!-- Hero Section -->
 <div class="jumbotron text-center bg-light">
@@ -7,7 +7,7 @@
     <p class="lead">Empowering farmers and operators by connecting them with the tools, services, and expertise they need to succeed.</p>
     <hr class="my-4">
     <p class="lead">Join us in advancing SDG 2 (Zero Hunger) through innovative solutions for agricultural machinery rentals, skilled operators, and more.</p>
-    <a class="btn btn-success btn-lg" href="{% url 'create_listing' %}" role="button">Create Your Listing</a>
+    <a class="btn btn-success btn-lg" href="{% url 'create_machinery_listing' %}" role="button">Create Your Mchinery Listing</a>
 </div>
 
 <!-- Carousel Section -->
@@ -19,21 +19,21 @@
     </ol>
     <div class="carousel-inner">
         <div class="carousel-item active">
-            <img src="{% static 'images/hero1.jpg' %}" class="d-block w-100" alt="Agricultural Machinery">
+            <img src="{% static 'images/DI-75-removebg-preview.png' %}" class="d-block w-100" alt="Agricultural Machinery">
             <div class="carousel-caption d-none d-md-block">
                 <h5>Revolutionizing Farming</h5>
                 <p>Access a variety of agricultural machinery and services to help your farm grow.</p>
             </div>
         </div>
         <div class="carousel-item">
-            <img src="{% static 'images/hero2.jpg' %}" class="d-block w-100" alt="Operator Services">
+            <img src="{% static 'images/ti_massey_ferguson_tractor_mf5710.png' %}" class="d-block w-100" alt="Operator Services">
             <div class="carousel-caption d-none d-md-block">
                 <h5>Skilled Operators On Demand</h5>
                 <p>Hire experienced operators to handle your machinery and boost productivity.</p>
             </div>
         </div>
         <div class="carousel-item">
-            <img src="{% static 'images/hero3.jpg' %}" class="d-block w-100" alt="Farmers Collaboration">
+            <img src="{% static 'images/TS6-125.png' %}" class="d-block w-100" alt="Farmers Collaboration">
             <div class="carousel-caption d-none d-md-block">
                 <h5>Collaborating for Success</h5>
                 <p>Build a community of farmers, operators, and service providers working together.</p>
@@ -55,10 +55,14 @@
 
 <div class="container">
     <div class="row">
-        {% for listing in listings %}
+        {% for listing in listings|slice:":3" %}
             <div class="col-md-4 mb-4">
                 <div class="card shadow-sm">
-                    <img src="{% static 'images/default-listing.jpg' %}" class="card-img-top" alt="Listing Image">
+                    {% if listing.image %}
+                        <img src="{{ listing.image.url }}" class="card-img-top" alt="Listing Image">
+                    {% else %}
+                        <img src="{% static 'images/default_image.png' %}" class="card-img-top" alt="Default Listing Image">
+                    {% endif %}
                     <div class="card-body">
                         <h5 class="card-title">{{ listing.title }}</h5>
                         <p class="card-text">{{ listing.description|truncatewords:20 }}</p>
@@ -72,6 +76,7 @@
         {% endfor %}
     </div>
 </div>
+
 
 <!-- How it Works Section -->
 <div class="container my-5 text-center">

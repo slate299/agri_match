@@ -6,7 +6,7 @@ from django.contrib.auth import login
 from allauth.account.forms import SignupForm
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
 from .models import CustomUser, MachineryListing, OperatorListing, Wishlist, RentalTransaction, Review
-from .forms import ReviewForm, MachineryListingForm
+from .forms import ReviewForm, MachineryListingForm, OperatorListingForm
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib import messages
@@ -86,21 +86,21 @@ def create_machinery_listing(request):
 
     return render(request, 'create_machinery_listing.html', {'form': form})
 
-
-# Create operator listing (only for logged-in users)
+# Create operator listing
 @login_required
-def create_machinery_listing(request):
+def create_operator_listing(request):
     if request.method == 'POST':
-        form = MachineryListingForm(request.POST, request.FILES)
+        form = OperatorListingForm(request.POST, request.FILES)
         if form.is_valid():
-            machinery = form.save(commit=False)
-            machinery.user = request.user
-            machinery.save()
-            return redirect('home')  # Redirect to a success page or listings page
+            operator = form.save(commit=False)
+            operator.user = request.user
+            operator.save()
+            return redirect('home')
     else:
-        form = MachineryListingForm()
+        form = OperatorListingForm()
 
-    return render(request, 'create_machinery_listing.html', {'form': form})
+    return render(request, 'create_operator_listing.html', {'form': form})
+
 # Add machinery listing to wishlist
 @login_required
 def add_to_wishlist(request, listing_id):
