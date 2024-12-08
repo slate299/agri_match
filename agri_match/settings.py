@@ -89,6 +89,8 @@ DATABASES = {
     }
 }
 
+AUTH_USER_MODEL = 'agri_match_app.CustomUser'
+
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {

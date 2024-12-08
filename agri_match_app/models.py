@@ -6,7 +6,7 @@ from django.utils import timezone
 class CustomUser(AbstractUser):
     is_lister = models.BooleanField(default=False)
     is_renter = models.BooleanField(default=False)
-    is_wishlist_user = models.BooleanField(default=False)
+    is_wishlist_user = models.BooleanField(default=True)
 
     # Override the related_name for groups and user_permissions to avoid clashes
     groups = models.ManyToManyField(
@@ -81,7 +81,6 @@ class OperatorListing(models.Model):
 class Wishlist(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='wishlists')
     items = models.ManyToManyField(MachineryListing, blank=True)
-    operators = models.ManyToManyField(OperatorListing, blank=True)
 
     def __str__(self):
         return f"Wishlist for {self.user.username}"

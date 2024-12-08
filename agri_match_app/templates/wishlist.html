@@ -1,23 +1,26 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% block content %}
 <h2 class="text-center my-5">Your Wishlist</h2>
 
-<div class="row">
-    {% for item in wishlist %}
-        <div class="col-md-4 mb-4">
-            <div class="card shadow-sm">
-                <img src="{% static 'images/default_image.png' %}" class="card-img-top" alt="Listing Image">
-                <div class="card-body">
-                    <h5 class="card-title">{{ item.title }}</h5>
-                    <p class="card-text">{{ item.description|truncatewords:20 }}</p>
-                    <a href="{% url 'rent_item' item.id %}" class="btn btn-outline-success">Rent Now</a>
-                    <a href="{% url 'remove_from_wishlist' item.id %}" class="btn btn-outline-danger">Remove</a>
+{% if wishlist %}
+    <div class="row">
+        {% for item in wishlist %}
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm">
+                    <img src="{% static 'images/default_image.png' %}" class="card-img-top" alt="Listing Image">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ item.make }} {{ item.model }}</h5>
+                        <p class="card-text">{{ item.description|truncatewords:20 }}</p>
+                        <a href="{% url 'rent_or_hire' item.id %}" class="btn btn-outline-success">Rent Now</a>
+                        <a href="{% url 'remove_from_wishlist' item.id %}" class="btn btn-outline-danger">Remove</a>
+                    </div>
                 </div>
             </div>
-        </div>
-    {% empty %}
-        <p>Your wishlist is empty.</p>
-    {% endfor %}
-</div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p class="text-center">Your wishlist is empty. Start adding items!</p>
+{% endif %}
 {% endblock %}

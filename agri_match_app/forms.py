@@ -37,12 +37,33 @@ class MachineryListingForm(forms.ModelForm):
         label="Type",
         required=True
     )
+    condition = forms.ChoiceField(
+        choices=[('New', 'New'), ('Used', 'Used')],
+        label="Condition",
+        required=True
+    )
+    availability = forms.ChoiceField(
+        choices=[('Available Now', 'Available Now'), ('Available in 2 weeks', 'Available in 2 weeks'),
+                 ('Available in 1 month', 'Available in 1 month')],
+        label="Availability",
+        required=True
+    )
+    location = forms.CharField(
+        max_length=255,
+        label="Location (County/Region)",
+        required=False
+    )
+    category_of_service = forms.ChoiceField(
+        choices=[('Renting Only', 'Renting Only'), ('Renting with Operator', 'Renting with Operator')],
+        label="Category of Service",
+        required=True
+    )
 
     class Meta:
         model = MachineryListing
         fields = [
-            'category', 'type', 'make', 'model', 'condition', 'description',
-            'price_per_day', 'available_from', 'available_to', 'location', 'image'
+            'category', 'type', 'make', 'model', 'condition', 'availability', 'location', 'category_of_service',
+            'description', 'price_per_day', 'available_from', 'available_to', 'image'
         ]
         widgets = {
             'available_from': forms.DateInput(attrs={'type': 'date'}),
@@ -79,11 +100,12 @@ class OperatorListingForm(forms.ModelForm):
 class WishlistForm(forms.ModelForm):
     class Meta:
         model = Wishlist
-        fields = ['items', 'operators']
+        fields = ['items']
 
     def save(self, commit=True):
         wishlist = super().save(commit=False)
-        wishlist.user = self.instance.user  # Associate with the current logged-in user
+        if not wishlist.user:
+            wishlist.user = self.initial.get('user')  # Associate with the current logged-in user
         if commit:
             wishlist.save()
         return wishlist

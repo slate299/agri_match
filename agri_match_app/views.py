@@ -101,20 +101,31 @@ def create_operator_listing(request):
 
     return render(request, 'create_operator_listing.html', {'form': form})
 
+
 # Add machinery listing to wishlist
 @login_required
 def add_to_wishlist(request, listing_id):
     listing = get_object_or_404(MachineryListing, pk=listing_id)
     wishlist, created = Wishlist.objects.get_or_create(user=request.user)
-    wishlist.items.add(listing)
-    messages.success(request, f'{listing.make} {listing.model} has been added to your wishlist!')
+
+    # Check if the listing is already in the wishlist
+    if listing in wishlist.items.all():
+        messages.info(request, f'{listing.make} {listing.model} is already in your wishlist!')
+    else:
+        wishlist.items.add(listing)
+        messages.success(request, f'{listing.make} {listing.model} has been added to your wishlist!')
+
     return redirect('machinery_listings')
 
-# View wishlist
+
+# View the user's wishlist
 @login_required
 def wishlist(request):
-    wishlist = Wishlist.objects.get(user=request.user)
-    return render(request, 'wishlist.html', {'wishlist': wishlist})
+    wishlist, created = Wishlist.objects.get_or_create(user=request.user)
+    # Get the items (machinery listings) in the wishlist
+    machinery_in_wishlist = wishlist.items.all()
+
+    return render(request, 'wishlist.html', {'wishlist': machinery_in_wishlist})
 
 # Rent machinery or hire operator (only for logged-in users)
 @login_required
@@ -222,3 +233,11 @@ def operator_listings(request):
 def get_types(request, category_id):
     types = MachineryType.objects.filter(category_id=category_id)
     return JsonResponse(list(types.values('id', 'name')), safe=False)
+
+# Privacy Policy View
+def privacy_policy(request):
+    return render(request, 'privacy_policy.html')
+
+# Terms & Conditions View
+def terms_conditions(request):
+    return render(request, 'terms_conditions.html')

@@ -46,4 +46,6 @@ urlpatterns = [
     # Admin Dashboard (Only for superusers)
     path('admin_dashboard/', views.admin_dashboard, name='admin_dashboard'),
     path('get-types/<int:category_id>/', views.get_types, name='get_types'),
+    path('privacy-policy/', views.privacy_policy, name='privacy_policy'),
+    path('terms-and-conditions/', views.terms_conditions, name='terms_conditions'),
 ]
