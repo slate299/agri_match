@@ -100,21 +100,30 @@
 </div>
 
 <script>
-    // Dynamic type loading
-    document.getElementById('category').addEventListener('change', function () {
-        const categoryId = this.value;
-        fetch(`/get-types/${categoryId}/`)
-            .then(response => response.json())
-            .then(data => {
-                const typeSelect = document.getElementById('type');
-                typeSelect.innerHTML = '<option value="" selected disabled>Select a Type</option>';
-                data.forEach(type => {
-                    const option = document.createElement('option');
-                    option.value = type.id;
-                    option.textContent = type.name;
-                    typeSelect.appendChild(option);
-                });
-            });
+    document.addEventListener('DOMContentLoaded', function () {
+        const categoryDropdown = document.getElementById('id_category');
+        const typeDropdown = document.getElementById('id_type');
+
+        categoryDropdown.addEventListener('change', function () {
+            const categoryId = this.value;
+
+            if (categoryId) {
+                fetch(`/get-machinery-types/${categoryId}/`) // Replace with your actual URL
+                    .then(response => response.json())
+                    .then(data => {
+                        typeDropdown.innerHTML = '';
+                        data.types.forEach(function (type) {
+                            const option = document.createElement('option');
+                            option.value = type.id;
+                            option.textContent = type.name;
+                            typeDropdown.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching machinery types:', error));
+            } else {
+                typeDropdown.innerHTML = ''; // Clear types if no category is selected
+            }
+        });
     });
 
     // Image preview function

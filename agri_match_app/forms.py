@@ -2,27 +2,37 @@ from django import forms
 from .models import (MachineryListing, OperatorListing, Wishlist, RentalTransaction, Review,
                      CustomUser, MachineryCategory, MachineryType)
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-
+from django.contrib.auth.models import Group
 
 # Custom User Registration Form (Sign Up)
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True)
     first_name = forms.CharField(max_length=100, required=True)
     last_name = forms.CharField(max_length=100, required=True)
+    group_name = forms.ChoiceField(
+        choices=[('Admin', 'Admin'),
+                 ('Machinery Lister', 'Machinery Lister'),
+                 ('Operator Lister', 'Operator Lister'),
+                 ('Renter', 'Renter')],
+        label="Choose your role",
+        required=True
+    )
 
     class Meta:
         model = CustomUser
-        fields = ['username', 'first_name', 'last_name', 'email', 'password1', 'password2']
+        fields = ['username', 'first_name', 'last_name', 'email', 'password1', 'password2', 'group_name']
 
-    def save(self, request=None, commit=True):
+    def save(self, commit=True):
         user = super().save(commit=False)
-        user.is_lister = False  # Default to not being a lister
-        user.is_renter = False  # Default to not being a renter
-        user.is_wishlist_user = False  # Default to not being a wishlist user
-        if request:
-            pass
+        # Set default user values or roles if needed
         if commit:
             user.save()
+
+        # Assign the user to the appropriate group based on their role choice
+        group_name = self.cleaned_data['group_name']
+        group = Group.objects.get(name=group_name)
+        user.groups.add(group)
+
         return user
 
 # Machinery Listing

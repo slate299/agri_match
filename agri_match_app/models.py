@@ -4,9 +4,10 @@ from django.utils import timezone
 
 # Custom User Model
 class CustomUser(AbstractUser):
-    is_lister = models.BooleanField(default=False)
-    is_renter = models.BooleanField(default=False)
-    is_wishlist_user = models.BooleanField(default=True)
+    is_admin = models.BooleanField(default=False)
+    is_machinery_lister = models.BooleanField(default=False)
+    is_operator_lister = models.BooleanField(default=False)
+    is_renter = models.BooleanField(default=True)
 
     # Override the related_name for groups and user_permissions to avoid clashes
     groups = models.ManyToManyField(
@@ -41,7 +42,7 @@ class MachineryType(models.Model):
 
 # Updated Machinery Listing Model with Location
 class MachineryListing(models.Model):
-    category = models.ForeignKey(MachineryCategory, on_delete=models.SET_NULL, null=True)
+    category = models.ForeignKey(MachineryCategory, on_delete=models.SET_NULL, null=True, blank=True)
     type = models.ForeignKey(MachineryType, on_delete=models.SET_NULL, null=True)
     make = models.CharField(max_length=100)
     model = models.CharField(max_length=100)

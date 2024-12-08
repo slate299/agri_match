@@ -1,25 +1,26 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Agri-Match{% endblock %}</title>
     <link rel="icon" href="{% static 'images/favicon.png' %}" type="image/x-icon">
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Bootstrap JS Bundle (includes Popper.js for dropdowns) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Bootstrap Icons -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons & FontAwesome -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=1.0">
 
     {% block head %}{% endblock %}
 </head>
+
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-success">
@@ -32,18 +33,10 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'home' %}">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'about_us' %}">About Us</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'contact_us' %}">Contact Us</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'wishlist' %}">Wishlist</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'about_us' %}">About Us</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'contact_us' %}">Contact Us</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'wishlist' %}">Wishlist</a></li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="createDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Create Listing
@@ -65,37 +58,22 @@
                 </ul>
                 <ul class="navbar-nav">
                     {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-                        </li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
                     {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'account_login' %}">Login</a>
-                        </li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'account_login' %}">Login</a></li>
                     {% endif %}
+                </ul>
+                <ul class="navbar-nav">
+
                 </ul>
             </div>
         </div>
     </nav>
-
-    <!-- Admin Sidebar (Only visible to Admins) -->
-    {% if user.is_authenticated and user.is_admin %}
-    <div class="d-flex">
-        <div class="sidebar bg-dark text-white p-4" style="width: 250px; height: 100vh;">
-            <h4>Admin Dashboard</h4>
-            <ul class="list-unstyled">
-                <li><a href="{% url 'admin_dashboard' %}" class="text-white">Dashboard</a></li>
-                <li><a href="{% url 'manage_listings' %}" class="text-white">Manage Listings</a></li>
-                <li><a href="{% url 'manage_users' %}" class="text-white">Manage Users</a></li>
-                <li><a href="{% url 'reports' %}" class="text-white">Reports</a></li>
-                <li><a href="{% url 'settings' %}" class="text-white">Settings</a></li>
-            </ul>
-        </div>
-    {% endif %}
     <!-- Regular Content Layout -->
-        <div class="content py-4">
-            {% block content %}{% endblock %}
-        </div>
+    <div class="content py-4">
+        {% block content %}{% endblock %}
+    </div>
+
     <!-- Footer -->
     <footer class="bg-dark text-white py-5">
         <div class="container">
@@ -103,7 +81,7 @@
                 <!-- About Section -->
                 <div class="col-md-4 mb-4 mb-md-0">
                     <h5 class="text-uppercase mb-3 font-weight-bold">About Agri-Match</h5>
-                    <p class="lead">Your platform for connecting with the best machinery and operators in agriculture, empowering sustainable farming solutions.</p>
+                    <p class="lead">Connecting you with the best machinery and operators in agriculture, empowering sustainable farming solutions.</p>
                 </div>
 
                 <!-- Quick Links Section -->
@@ -128,19 +106,15 @@
             <!-- Logo and Social Media Section -->
             <div class="row mt-4 text-center">
                 <div class="col-12">
-                    <!-- Logo in Footer -->
                     <img src="{% static 'images/logo.png' %}" alt="Agri-Match Logo" width="150">
                 </div>
             </div>
 
-            <!-- Social Media & Company Info Section -->
             <div class="row mt-4">
                 <div class="col-md-6">
                     <p class="small">&copy; 2024 Agri-Match | All Rights Reserved</p>
                     <p class="small">Connecting Agricultural Services and Products for a Sustainable Future</p>
                 </div>
-
-                <!-- Social Media Icons -->
                 <div class="col-md-6 text-center text-md-right">
                     <h5 class="text-uppercase mb-3 font-weight-bold">Follow Us</h5>
                     <div class="social-icons">
@@ -152,7 +126,7 @@
                 </div>
             </div>
 
-            <!-- Additional Links (Privacy Policy & Terms) -->
+            <!-- Privacy Policy and Terms Links -->
             <div class="row mt-4">
                 <div class="col-12 text-center">
                     <a href="{% url 'privacy_policy' %}" class="text-white text-decoration-none">Privacy Policy</a> |
@@ -165,7 +139,9 @@
 <!-- Bootstrap Bundle JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AExxUcGFK5Kvk1e5BwS3uKAo4kMlY5q82CpXV+OMa2U13KnWGeGrm9KiSt5e6" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AExxUcGFK5Kvk1e5BwS3uKAo4kMlY5q82CpXV+OMa2U13KnWGeGrm9KiSt5e6" crossorigin="anonymous"></script>
-
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     {% block scripts %}{% endblock %}
     </div>
 </body>

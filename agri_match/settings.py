@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
-    'agri_match_app',
+    'agri_match_app.apps.AgriMatchAppConfig',
     'django_extensions',
 
 ]
@@ -129,7 +129,7 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
 )
-
+LOGIN_URL = 'account_login'
 LOGIN_REDIRECT_URL = '/'  # Where to redirect after successful login
 ACCOUNT_LOGOUT_ON_GET = True  # Automatically log out user on GET request
 ACCOUNT_EMAIL_VERIFICATION = "none"  # Email verification on registration

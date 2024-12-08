@@ -9,7 +9,45 @@
 
                 <form method="POST">
                     {% csrf_token %}
-                    {{ form.as_p }}
+
+                    <!-- Display the form fields -->
+                    <div class="form-group">
+                        {{ form.username.errors }}
+                        <label for="{{ form.username.id_for_label }}">Username</label>
+                        {{ form.username }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.first_name.errors }}
+                        <label for="{{ form.first_name.id_for_label }}">First Name</label>
+                        {{ form.first_name }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.last_name.errors }}
+                        <label for="{{ form.last_name.id_for_label }}">Last Name</label>
+                        {{ form.last_name }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.email.errors }}
+                        <label for="{{ form.email.id_for_label }}">Email</label>
+                        {{ form.email }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.password1.errors }}
+                        <label for="{{ form.password1.id_for_label }}">Password</label>
+                        {{ form.password1 }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.password2.errors }}
+                        <label for="{{ form.password2.id_for_label }}">Confirm Password</label>
+                        {{ form.password2 }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.group_name.errors }}
+                        <label for="{{ form.group_name.id_for_label }}">Select Role</label>
+                        {{ form.group_name }}
+                    </div>
+
+                    <!-- Submit button -->
                     <button type="submit" class="btn btn-success btn-block">Sign Up</button>
                 </form>
 

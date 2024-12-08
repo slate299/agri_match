@@ -11,6 +11,7 @@
                     {% csrf_token %}
                     {{ form.as_p }}
                     <button type="submit" class="btn btn-success btn-block">Login</button>
+                    <input type="hidden" name="next" value="{{ next }}" />
                 </form>
 
                 <p class="text-center mt-3">Don't have an account? <a href="{% url 'account_signup' %}">Sign up here</a></p>

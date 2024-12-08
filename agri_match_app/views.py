@@ -10,6 +10,9 @@ from .forms import ReviewForm, MachineryListingForm, OperatorListingForm, Custom
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.models import Group
+from django.db.models.signals import post_migrate
+from django.dispatch import receiver
 from django.urls import reverse_lazy
 
 # Login view
@@ -24,16 +27,29 @@ def login_view(request):
         form = AuthenticationForm()
     return render(request, 'account_login.html', {'form': form})
 
+
 # Signup view
 def signup_view(request):
     if request.method == 'POST':
-        form = SignupForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save(request=request)
+            # Save the user without logging them in yet
+            user = form.save()
+
+            # Automatically log the user in
             login(request, user)
-            return redirect('home')  # Redirect to the home page after successful signup
+
+            # Assign the user to a specific group
+            # You can decide on the group based on some condition, for example:
+            group_name = request.POST.get('group_name')  # Assuming this field exists in your form
+            group = Group.objects.get(name=group_name)
+            user.groups.add(group)
+
+            # Redirect to the home page after successful signup
+            return redirect('home')
     else:
         form = CustomUserCreationForm()
+
     return render(request, 'account_signup.html', {'form': form})
 
 # Home view
@@ -83,7 +99,7 @@ def create_machinery_listing(request):
             return redirect('machinery_listings')  # Redirect to a success page or listings page
     else:
         form = MachineryListingForm()
-
+        print(form.errors)
     return render(request, 'create_machinery_listing.html', {'form': form})
 
 # Create operator listing
@@ -98,7 +114,7 @@ def create_operator_listing(request):
             return redirect('home')
     else:
         form = OperatorListingForm()
-
+        print(form.errors)
     return render(request, 'create_operator_listing.html', {'form': form})
 
 
@@ -202,6 +218,44 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
 def password_reset_done(request):
     return render(request, 'registration/password_reset_done.html')
 
+# View for displaying all machinery listings
+def machinery_listings(request):
+    machinery_list = MachineryListing.objects.all()  # No need for listing_type
+    return render(request, 'machinery_listings.html', {'machinery_list': machinery_list})
+
+# View for displaying all operator listings
+def operator_listings(request):
+    operator_list = OperatorListing.objects.all()  # No need for listing_type
+    return render(request, 'operator_listings.html', {'operator_list': operator_list})
+
+def get_machinery_types(request, category_id):
+    types = MachineryType.objects.filter(category_id=category_id).values('id', 'name')
+    return JsonResponse({'types': list(types)}, safe=False)
+
+# Privacy Policy View
+def privacy_policy(request):
+    return render(request, 'privacy_policy.html')
+
+# Terms & Conditions View
+def terms_conditions(request):
+    return render(request, 'terms_conditions.html')
+
+
+# Create user groups automatically when migrations are done (on app startup)
+@receiver(post_migrate)
+def create_user_groups(sender, **kwargs):
+    # Create Admin group
+    admin_group, created = Group.objects.get_or_create(name='Admin')
+
+    # Create Machinery Lister group
+    machinery_lister_group, created = Group.objects.get_or_create(name='Machinery Lister')
+
+    # Create Operator Lister group
+    operator_lister_group, created = Group.objects.get_or_create(name='Operator Lister')
+
+    # Create Renter group
+    renter_group, created = Group.objects.get_or_create(name='Renter')
+
 # Admin Dashboard (Only accessible to superusers)
 @login_required
 def admin_dashboard(request):
@@ -220,24 +274,46 @@ def admin_dashboard(request):
         'rental_count': rental_count
     })
 
-# View for displaying all machinery listings
-def machinery_listings(request):
-    machinery_list = MachineryListing.objects.all()  # No need for listing_type
-    return render(request, 'machinery_listings.html', {'machinery_list': machinery_list})
+# Manage Listings (only for Admin)
+@login_required
+def manage_listings(request):
+    if not request.user.is_staff:
+        return HttpResponseForbidden("You are not authorized to view this page.")
 
-# View for displaying all operator listings
-def operator_listings(request):
-    operator_list = OperatorListing.objects.all()  # No need for listing_type
-    return render(request, 'operator_listings.html', {'operator_list': operator_list})
+    # Fetch machinery and operator listings (example)
+    machinery_listings = MachineryListing.objects.all()
+    operator_listings = OperatorListing.objects.all()
 
-def get_types(request, category_id):
-    types = MachineryType.objects.filter(category_id=category_id)
-    return JsonResponse(list(types.values('id', 'name')), safe=False)
+    return render(request, 'manage_listings.html',
+                  {'machinery_listings': machinery_listings, 'operator_listings': operator_listings})
 
-# Privacy Policy View
-def privacy_policy(request):
-    return render(request, 'privacy_policy.html')
 
-# Terms & Conditions View
-def terms_conditions(request):
-    return render(request, 'terms_conditions.html')
+# Manage Users (only for Admin)
+@login_required
+def manage_users(request):
+    if not request.user.is_staff:
+        return HttpResponseForbidden("You are not authorized to view this page.")
+
+    users = CustomUser.objects.all()  # Or apply any filtering
+    return render(request, 'manage_users.html', {'users': users})
+
+
+# Reports (only for Admin)
+@login_required
+def reports(request):
+    if not request.user.is_staff:
+        return HttpResponseForbidden("You are not authorized to view this page.")
+
+    # You could include things like total rentals, user registrations, etc.
+    rental_count = RentalTransaction.objects.count()
+    return render(request, 'reports.html', {'rental_count': rental_count})
+
+
+# Settings (only for Admin)
+@login_required
+def settings(request):
+    if not request.user.is_staff:
+        return HttpResponseForbidden("You are not authorized to view this page.")
+
+    # Handle settings here
+    return render(request, 'settings.html')
