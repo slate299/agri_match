@@ -150,3 +150,12 @@ class ReviewForm(forms.ModelForm):
         if commit:
             review.save()
         return review
+
+
+class RoleRegistrationForm(forms.Form):
+    ROLE_CHOICES = [
+        ('machinery_lister', 'Machinery Lister'),
+        ('operator_lister', 'Operator Lister'),
+        ('renter', 'Renter'),
+    ]
+    role = forms.ChoiceField(choices=ROLE_CHOICES, widget=forms.RadioSelect)

@@ -57,6 +57,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # 'whitenoise.middleware.WhiteNoiseMiddleware',
     'allauth.account.middleware.AccountMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware',
+    'agri_match_app.middleware.RoleRequiredMiddleware',
 ]
 
 ROOT_URLCONF = 'agri_match.urls'
@@ -118,7 +120,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'agri_match_app', 'static'),  # Replace 'agri_match_app' with the actual app name
+    os.path.join(BASE_DIR, 'agri_match_app', '../static'),  # Replace 'agri_match_app' with the actual app name
 ]
 # Media files
 MEDIA_URL = '/media/'
@@ -136,7 +138,7 @@ ACCOUNT_EMAIL_VERIFICATION = "none"  # Email verification on registration
 ACCOUNT_EMAIL_REQUIRED = False  # Email is required for registration
 ACCOUNT_SIGNUP_PASSWORD_ENTER = False  # Optional: skip password entry on signup
 ACCOUNT_AUTHENTICATED_REDIRECT_URL = '/'  # Redirect authenticated users to the homepage
-ACCOUNT_SIGNUP_REDIRECT_URL = '/'
+ACCOUNT_SIGNUP_REDIRECT_URL = '/register-role/'
 ACCOUNT_LOGIN_ON_SIGNUP = True
 
 SOCIALACCOUNT_PROVIDERS = {
@@ -181,13 +183,12 @@ ACCOUNT_PASSWORD_RESET_DONE_URL = 'password_reset_done'
 ADMIN_EMAIL = 'natashahinga58@gmail.com'
 
 EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
-
-# EMAIL_HOST = 'smtp.gmail.com'  # Or your email provider's SMTP server
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = 'your_email@example.com'
-# EMAIL_HOST_PASSWORD = 'your_password'  # Use environment variables for better security
-
+EMAIL_HOST = 'smtp.gmail.com'  # Or your email provider's SMTP server
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')  # Fetch from .env
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')  # Fetch from .env
+DEFAULT_FROM_EMAIL = config('EMAIL_HOST_USER')  # Same as EMAIL_HOST_USER
 
 
 

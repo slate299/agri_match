@@ -80,11 +80,13 @@ class OperatorListing(models.Model):
 
 # Wishlist Model
 class Wishlist(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='wishlists')
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='wishlist')
     items = models.ManyToManyField(MachineryListing, blank=True)
 
     def __str__(self):
         return f"Wishlist for {self.user.username}"
+    def item_count(self):
+        return self.items.count()
 
 
 # Rental Transaction Model

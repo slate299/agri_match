@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card text-center">
+        <div class="card-body">
+            <h3 class="card-title">Logout</h3>
+            <p class="card-text">Are you sure you want to log out?</p>
+            <div class="d-flex justify-content-center gap-3 mt-4">
+                <!-- Confirm Logout -->
+                <form method="POST" action="{% url 'account_logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success">Yes, Log me out</button>
+                </form>
+                <!-- Cancel Logout -->
+                <a href="{% url 'home' %}" class="btn btn-secondary">No, Take me back</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,14 +1,9 @@
 from django.urls import path
 from . import views
-from django.conf import settings
-from django.conf.urls.static import static
-from django.contrib.auth import views as auth_views
+
 
 urlpatterns = [
-    # Authentication
-    path('login/', views.login_view, name='account_login'),
-    path('signup/', views.signup_view, name='account_signup'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+
     # Home and about pages
     path('', views.home, name='home'),
     path('about_us/', views.about_us, name='about_us'),
@@ -36,20 +31,8 @@ urlpatterns = [
 
     # Reviews
     path('submit_review/<int:listing_id>/<str:listing_type>/', views.submit_review, name='submit_review'),
-
-    # Password Reset
-    path('password_reset/', views.CustomPasswordResetView.as_view(), name='password_reset'),
-    path('password_reset_done/', views.password_reset_done, name='password_reset_done'),
-    path('password_reset_confirm/<uidb64>/<token>/', views.CustomPasswordResetConfirmView.as_view(),
-         name='password_reset_confirm'),
-
-    # Admin Dashboard (Only for superusers)
-    path('get-machinery-types/<int:category_id>/', views.get_machinery_types, name='get_machinery_types'),
     path('privacy-policy/', views.privacy_policy, name='privacy_policy'),
-    path('terms-and-conditions/', views.terms_conditions, name='terms_conditions'),
-    path('admin_dashboard/', views.admin_dashboard, name='admin_dashboard'),
-    path('manage_listings/', views.manage_listings, name='manage_listings'),
-    path('manage_users/', views.manage_users, name='manage_users'),
-    path('reports/', views.reports, name='reports'),
-    path('settings/', views.settings, name='settings'),
+    path('terms-conditions/', views.terms_conditions, name='terms_conditions'),
+    path('register-role/', views.register_role, name='register_role'),
+
 ]

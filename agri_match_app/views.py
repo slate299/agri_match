@@ -1,12 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden, JsonResponse
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import login
-from allauth.account.forms import SignupForm
-from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
 from .models import CustomUser, MachineryListing, OperatorListing, Wishlist, RentalTransaction, Review, MachineryType
-from .forms import ReviewForm, MachineryListingForm, OperatorListingForm, CustomUserCreationForm
+from .forms import ReviewForm, MachineryListingForm, OperatorListingForm, CustomUserCreationForm, RoleRegistrationForm
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib import messages
@@ -15,42 +11,6 @@ from django.db.models.signals import post_migrate
 from django.dispatch import receiver
 from django.urls import reverse_lazy
 
-# Login view
-def login_view(request):
-    if request.method == 'POST':
-        form = AuthenticationForm(data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
-            login(request, user)
-            return redirect('home')  # Redirect to the home page after successful login
-    else:
-        form = AuthenticationForm()
-    return render(request, 'account_login.html', {'form': form})
-
-
-# Signup view
-def signup_view(request):
-    if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            # Save the user without logging them in yet
-            user = form.save()
-
-            # Automatically log the user in
-            login(request, user)
-
-            # Assign the user to a specific group
-            # You can decide on the group based on some condition, for example:
-            group_name = request.POST.get('group_name')  # Assuming this field exists in your form
-            group = Group.objects.get(name=group_name)
-            user.groups.add(group)
-
-            # Redirect to the home page after successful signup
-            return redirect('home')
-    else:
-        form = CustomUserCreationForm()
-
-    return render(request, 'account_signup.html', {'form': form})
 
 # Home view
 def home(request):
@@ -90,11 +50,13 @@ def contact_us_thankyou(request):
 # Create machinery listing (only for logged-in users)
 @login_required
 def create_machinery_listing(request):
+    if not request.user.groups.filter(name="Machinery Lister").exists():
+        return HttpResponseForbidden("You are not authorized to create a machinery listing.")
     if request.method == 'POST':
         form = MachineryListingForm(request.POST, request.FILES)
         if form.is_valid():
             machinery = form.save(commit=False)
-            machinery.user = request.user
+            machinery.user = request.user  # Ensure the user is assigned to the listing
             machinery.save()
             return redirect('machinery_listings')  # Redirect to a success page or listings page
     else:
@@ -109,7 +71,7 @@ def create_operator_listing(request):
         form = OperatorListingForm(request.POST, request.FILES)
         if form.is_valid():
             operator = form.save(commit=False)
-            operator.user = request.user
+            operator.user = request.user  # Ensure the user is assigned to the listing
             operator.save()
             return redirect('home')
     else:
@@ -124,9 +86,10 @@ def add_to_wishlist(request, listing_id):
     listing = get_object_or_404(MachineryListing, pk=listing_id)
     wishlist, created = Wishlist.objects.get_or_create(user=request.user)
 
-    # Check if the listing is already in the wishlist
+    # Add or remove item based on its presence
     if listing in wishlist.items.all():
-        messages.info(request, f'{listing.make} {listing.model} is already in your wishlist!')
+        wishlist.items.remove(listing)
+        messages.success(request, f'{listing.make} {listing.model} has been removed from your wishlist!')
     else:
         wishlist.items.add(listing)
         messages.success(request, f'{listing.make} {listing.model} has been added to your wishlist!')
@@ -137,7 +100,7 @@ def add_to_wishlist(request, listing_id):
 # View the user's wishlist
 @login_required
 def wishlist(request):
-    wishlist, created = Wishlist.objects.get_or_create(user=request.user)
+    wishlist, created = Wishlist.objects.get_or_create(user=request.user)  # Reference CustomUser here
     # Get the items (machinery listings) in the wishlist
     machinery_in_wishlist = wishlist.items.all()
 
@@ -150,7 +113,15 @@ def rent_or_hire(request, listing_id):
     if request.method == 'POST':
         start_date = request.POST['start_date']
         end_date = request.POST['end_date']
+        if start_date > end_date:
+            messages.error(request, "The rental start date cannot be after the end date.")
+            return redirect('rent_or_hire', listing_id=listing_id)
+
         rental_days = (end_date - start_date).days
+        if rental_days < 1:
+            messages.error(request, "The rental period must be at least one day.")
+            return redirect('rent_or_hire', listing_id=listing_id)
+
         total_amount = listing.price_per_day * rental_days
         RentalTransaction.objects.create(
             user=request.user,
@@ -161,6 +132,7 @@ def rent_or_hire(request, listing_id):
         )
         return HttpResponse('Rental request submitted')
     return render(request, 'rent_or_hire.html', {'listing': listing})
+
 
 # Submit review for a machinery or operator
 @login_required
@@ -174,7 +146,7 @@ def submit_review(request, listing_id, listing_type):
 
     # Check if the user has already reviewed this listing
     existing_review = Review.objects.filter(
-        user=request.user,
+        user=request.user,  # Reference CustomUser here
         machinery=listing if listing_type == 'machinery' else None,
         operator=listing if listing_type == 'operator' else None
     ).first()
@@ -183,7 +155,7 @@ def submit_review(request, listing_id, listing_type):
         form = ReviewForm(request.POST)
         if form.is_valid():
             review = form.save(commit=False)
-            review.user = request.user
+            review.user = request.user  # Reference CustomUser here
             if listing_type == 'machinery':
                 review.machinery = listing
             else:
@@ -195,28 +167,6 @@ def submit_review(request, listing_id, listing_type):
 
     return render(request, 'submit_review.html', {'form': form, 'listing': listing, 'existing_review': existing_review})
 
-# Custom Password Reset Views
-class CustomPasswordResetView(PasswordResetView):
-    template_name = 'registration/account_password_reset.html'
-    email_template_name = 'registration/password_reset_email.html'
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        response['Location'] = self.success_url
-        return response
-
-    success_url = '/password_reset_done/'
-
-class CustomPasswordResetConfirmView(PasswordResetConfirmView):
-    template_name = 'registration/account_password_reset_confirm.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
-
-# Password reset done view
-def password_reset_done(request):
-    return render(request, 'registration/password_reset_done.html')
 
 # View for displaying all machinery listings
 def machinery_listings(request):
@@ -240,6 +190,30 @@ def privacy_policy(request):
 def terms_conditions(request):
     return render(request, 'terms_conditions.html')
 
+@login_required
+def register_role(request):
+    if request.method == 'POST':
+        form = RoleRegistrationForm(request.POST)
+        if form.is_valid():
+            role = form.cleaned_data['role']
+
+            # Update the user's role based on the selection
+            user = request.user
+            if role == 'machinery_lister':
+                user.is_machinery_lister = True
+            elif role == 'operator_lister':
+                user.is_operator_lister = True
+            elif role == 'renter':
+                user.is_renter = True
+
+            user.save()
+
+            # Redirect to a success or home page
+            return redirect('home')
+    else:
+        form = RoleRegistrationForm()
+
+    return render(request, 'register_role.html', {'form': form})
 
 # Create user groups automatically when migrations are done (on app startup)
 @receiver(post_migrate)
@@ -255,65 +229,3 @@ def create_user_groups(sender, **kwargs):
 
     # Create Renter group
     renter_group, created = Group.objects.get_or_create(name='Renter')
-
-# Admin Dashboard (Only accessible to superusers)
-@login_required
-def admin_dashboard(request):
-    if not request.user.is_superuser:
-        return HttpResponseForbidden("You are not authorized to view this page.")
-
-    machinery_count = MachineryListing.objects.count()
-    operator_count = OperatorListing.objects.count()
-    user_count = CustomUser.objects.count()
-    rental_count = RentalTransaction.objects.count()
-
-    return render(request, 'admin_dashboard.html', {
-        'machinery_count': machinery_count,
-        'operator_count': operator_count,
-        'user_count': user_count,
-        'rental_count': rental_count
-    })
-
-# Manage Listings (only for Admin)
-@login_required
-def manage_listings(request):
-    if not request.user.is_staff:
-        return HttpResponseForbidden("You are not authorized to view this page.")
-
-    # Fetch machinery and operator listings (example)
-    machinery_listings = MachineryListing.objects.all()
-    operator_listings = OperatorListing.objects.all()
-
-    return render(request, 'manage_listings.html',
-                  {'machinery_listings': machinery_listings, 'operator_listings': operator_listings})
-
-
-# Manage Users (only for Admin)
-@login_required
-def manage_users(request):
-    if not request.user.is_staff:
-        return HttpResponseForbidden("You are not authorized to view this page.")
-
-    users = CustomUser.objects.all()  # Or apply any filtering
-    return render(request, 'manage_users.html', {'users': users})
-
-
-# Reports (only for Admin)
-@login_required
-def reports(request):
-    if not request.user.is_staff:
-        return HttpResponseForbidden("You are not authorized to view this page.")
-
-    # You could include things like total rentals, user registrations, etc.
-    rental_count = RentalTransaction.objects.count()
-    return render(request, 'reports.html', {'rental_count': rental_count})
-
-
-# Settings (only for Admin)
-@login_required
-def settings(request):
-    if not request.user.is_staff:
-        return HttpResponseForbidden("You are not authorized to view this page.")
-
-    # Handle settings here
-    return render(request, 'settings.html')
