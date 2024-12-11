@@ -190,5 +190,8 @@ EMAIL_HOST_USER = config('EMAIL_HOST_USER')  # Fetch from .env
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')  # Fetch from .env
 DEFAULT_FROM_EMAIL = config('EMAIL_HOST_USER')  # Same as EMAIL_HOST_USER
 
+CSRF_COOKIE_SECURE = False
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1', 'http://localhost']
+CSRF_FAILURE_VIEW = 'django.views.csrf.csrf_failure'
 
 

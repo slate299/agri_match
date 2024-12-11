@@ -50,7 +50,7 @@ def contact_us_thankyou(request):
 # Create machinery listing (only for logged-in users)
 @login_required
 def create_machinery_listing(request):
-    if not request.user.groups.filter(name="Machinery Lister").exists():
+    if not request.user.groups.filter(name__in=["Machinery Lister", "Admin"]).exists():
         return HttpResponseForbidden("You are not authorized to create a machinery listing.")
     if request.method == 'POST':
         form = MachineryListingForm(request.POST, request.FILES)

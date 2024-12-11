@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.core.exceptions import ValidationError
 from django.utils import timezone
 
 # Custom User Model
@@ -59,6 +60,10 @@ class MachineryListing(models.Model):
     location = models.CharField(max_length=255, blank=True, null=True)  # New location field
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='machinery_listings')
 
+    def clean(self):
+        if self.available_to and self.available_from and self.available_to < self.available_from:
+            raise ValidationError("Available to date must be after available from date.")
+
     def __str__(self):
         return f"{self.make} {self.model} ({self.category.name})"
 
@@ -74,6 +79,10 @@ class OperatorListing(models.Model):
     profile_picture = models.ImageField(upload_to='operators/', blank=True, null=True)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='operator_listings')
 
+    def clean(self):
+        if self.available_to and self.available_from and self.available_to < self.available_from:
+            raise ValidationError("Available to date must be after available from date.")
+
     def __str__(self):
         return self.name
 
@@ -81,10 +90,15 @@ class OperatorListing(models.Model):
 # Wishlist Model
 class Wishlist(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='wishlist')
-    items = models.ManyToManyField(MachineryListing, blank=True)
+    items = models.ManyToManyField(
+        MachineryListing,
+        blank=True,
+        verbose_name="Wishlist Items"
+        )
 
     def __str__(self):
         return f"Wishlist for {self.user.username}"
+
     def item_count(self):
         return self.items.count()
 
@@ -109,6 +123,11 @@ class Review(models.Model):
     machinery = models.ForeignKey(MachineryListing, on_delete=models.CASCADE, related_name='reviews', null=True, blank=True)
     rating = models.PositiveIntegerField(default=1, choices=[(i, str(i)) for i in range(1, 6)])
     comment = models.TextField()
+
+    def clean(self):
+        # Custom validation to ensure either an operator or machinery is provided
+        if not self.operator and not self.machinery:
+            raise ValidationError("A review must be associated with either an operator or machinery.")
 
     def __str__(self):
         return f"Review by {self.user.username} for {self.operator if self.operator else self.machinery}"

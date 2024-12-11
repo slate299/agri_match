@@ -159,3 +159,4 @@ class RoleRegistrationForm(forms.Form):
         ('renter', 'Renter'),
     ]
     role = forms.ChoiceField(choices=ROLE_CHOICES, widget=forms.RadioSelect)
+
