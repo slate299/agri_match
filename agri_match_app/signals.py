@@ -4,11 +4,12 @@ from django.db.models.signals import post_migrate, post_save
 from django.dispatch import receiver
 from .models import MachineryListing, OperatorListing, CustomUser
 
+
 # Create groups and permissions on migration
 @receiver(post_migrate)
 def create_user_groups(sender, **kwargs):
     try:
-        # Create user groups
+        # Define groups and their associated permissions
         groups = {
             "Admin": [],
             "Machinery Lister": [
@@ -21,15 +22,16 @@ def create_user_groups(sender, **kwargs):
                 ("change_operatorlisting", "Can change operator listing"),
                 ("delete_operatorlisting", "Can delete operator listing"),
             ],
-            "Renter": []
+            "Renter": [],
         }
 
+        # Loop through each group and create it with the relevant permissions
         for group_name, permissions in groups.items():
             group, _ = Group.objects.get_or_create(name=group_name)
+
+            # Add permissions for the group
             for codename, name in permissions:
-                content_type = ContentType.objects.get_for_model(
-                    MachineryListing if "machinery" in codename else OperatorListing
-                )
+                content_type = get_content_type(codename)
                 permission, _ = Permission.objects.get_or_create(
                     codename=codename,
                     content_type=content_type,
@@ -38,31 +40,65 @@ def create_user_groups(sender, **kwargs):
                 group.permissions.add(permission)
 
         print("User groups and permissions successfully created.")
+
     except Exception as e:
         print(f"Error during group creation: {e}")
 
-# Assign user to group after signup
+
+def get_content_type(codename):
+    """
+    Determines the content type based on the codename.
+    """
+    if "machinery" in codename:
+        return ContentType.objects.get_for_model(MachineryListing)
+    return ContentType.objects.get_for_model(OperatorListing)
+
+
 @receiver(post_save, sender=CustomUser)
 def assign_user_group(sender, instance, created, **kwargs):
     if created:
+        # New user logic (group assignment on creation)
         try:
-            group_name = None
-            if instance.is_admin:
-                group_name = "Admin"
-            elif instance.is_machinery_lister:
-                group_name = "Machinery Lister"
-            elif instance.is_operator_lister:
-                group_name = "Operator Lister"
-            elif instance.is_renter:
-                group_name = "Renter"
+            print(f"Assigning group for newly created user: {instance.username}")
+            # Role to group mapping
+            role_to_group = {
+                "is_admin": "Admin",
+                "is_machinery_lister": "Machinery Lister",
+                "is_operator_lister": "Operator Lister",
+                "is_renter": "Renter",
+            }
 
-            if group_name:
-                group = Group.objects.get(name=group_name)
-                instance.groups.add(group)
-                print(f"User '{instance.username}' added to group '{group_name}'.")
-            else:
-                print(f"No role assigned for user '{instance.username}'.")
-        except Group.DoesNotExist:
-            print(f"Group '{group_name}' does not exist.")
+            # Assign user to group based on their role
+            for role, group_name in role_to_group.items():
+                if getattr(instance, role, False):
+                    try:
+                        group = Group.objects.get(name=group_name)
+                        instance.groups.add(group)
+                        print(f"User '{instance.username}' added to group '{group_name}'.")
+                    except Group.DoesNotExist:
+                        print(f"Group '{group_name}' does not exist.")
         except Exception as e:
-            print(f"Error while assigning group: {e}")
+            print(f"Error during group assignment: {e}")
+
+    else:
+        # If it's an update (not a new user)
+        try:
+            print(f"Assigning group for existing user: {instance.username}")
+            # Same group assignment logic for updated user
+            role_to_group = {
+                "is_admin": "Admin",
+                "is_machinery_lister": "Machinery Lister",
+                "is_operator_lister": "Operator Lister",
+                "is_renter": "Renter",
+            }
+
+            for role, group_name in role_to_group.items():
+                if getattr(instance, role, False):
+                    try:
+                        group = Group.objects.get(name=group_name)
+                        instance.groups.add(group)
+                        print(f"User '{instance.username}' added to group '{group_name}'.")
+                    except Group.DoesNotExist:
+                        print(f"Group '{group_name}' does not exist.")
+        except Exception as e:
+            print(f"Error during group assignment: {e}")

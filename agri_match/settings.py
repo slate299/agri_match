@@ -74,6 +74,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.csrf',
                 'social_django.context_processors.backends',
                 'social_django.context_processors.login_redirect',
             ],
@@ -193,5 +194,5 @@ DEFAULT_FROM_EMAIL = config('EMAIL_HOST_USER')  # Same as EMAIL_HOST_USER
 CSRF_COOKIE_SECURE = False
 CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1', 'http://localhost']
 CSRF_FAILURE_VIEW = 'django.views.csrf.csrf_failure'
-
+CSRF_COOKIE_HTTPONLY = False
 

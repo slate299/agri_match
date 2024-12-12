@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content %}
 <div class="container mt-5">
     <h1 class="text-center mb-4">Operator Listings</h1>
@@ -28,6 +28,19 @@
                 </div>
             </div>
         {% endfor %}
+    {% for item in operator_listings %}
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm border-light">
+            <img src="{% static 'images/default_image.png' %}" class="card-img-top" alt="Listing Image">
+            <div class="card-body">
+                <h5 class="card-title">{{ item.name }}</h5>
+                <p class="card-text">{{ item.description|truncatewords:20 }}</p>
+                <a href="{% url 'listing_detail' listing_id=item.id listing_type='operator' %}" class="btn btn-outline-info">View Details</a>
+                <a href="{% url 'submit_review' listing_id=item.id listing_type='operator' %}" class="btn btn-outline-warning">Add Review</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
     </div>
 </div>
 {% endblock %}

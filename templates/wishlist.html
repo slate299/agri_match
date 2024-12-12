@@ -4,17 +4,30 @@
 {% block content %}
 <h2 class="text-center my-5">Your Wishlist</h2>
 
+{% if messages %}
+    <div class="container">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
 {% if wishlist %}
     <div class="row">
         {% for item in wishlist %}
             <div class="col-md-4 mb-4">
-                <div class="card shadow-sm">
-                    <img src="{% static 'images/default_image.png' %}" class="card-img-top" alt="Listing Image">
+                <div class="card shadow-sm border-light">
+                    <!-- Display the dynamic image or default if no image is provided -->
+                    <img src="{% if item.image %}{{ item.image.url }}{% else %}{% static 'images/default_image.png' %}{% endif %}" class="card-img-top" alt="Listing Image">
                     <div class="card-body">
                         <h5 class="card-title">{{ item.make }} {{ item.model }}</h5>
                         <p class="card-text">{{ item.description|truncatewords:20 }}</p>
-                        <a href="{% url 'rent_or_hire' item.id %}" class="btn btn-outline-success">Rent Now</a>
-                        <a href="{% url 'remove_from_wishlist' item.id %}" class="btn btn-outline-danger">Remove</a>
+                        <a href="{% url 'rent_item' item.id %}" class="btn btn-outline-success">Rent Now</a>
+                        <a href="{% url 'remove_from_wishlist' item.id %}" class="btn btn-outline-danger"
+                           onclick="return confirm('Are you sure you want to remove this item from your wishlist?');">Remove</a>
                     </div>
                 </div>
             </div>

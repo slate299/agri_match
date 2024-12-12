@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.exceptions import ValidationError
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth import get_user_model
 from django.utils import timezone
 
 # Custom User Model
@@ -8,7 +11,7 @@ class CustomUser(AbstractUser):
     is_admin = models.BooleanField(default=False)
     is_machinery_lister = models.BooleanField(default=False)
     is_operator_lister = models.BooleanField(default=False)
-    is_renter = models.BooleanField(default=True)
+    is_renter = models.BooleanField(default=False)
 
     # Override the related_name for groups and user_permissions to avoid clashes
     groups = models.ManyToManyField(
@@ -116,18 +119,17 @@ class RentalTransaction(models.Model):
         return f"Rental Transaction for {self.user.username}"
 
 
-# Review Model
+# Updated Review model
 class Review(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='reviews')
-    operator = models.ForeignKey(OperatorListing, on_delete=models.CASCADE, related_name='reviews', null=True, blank=True)
-    machinery = models.ForeignKey(MachineryListing, on_delete=models.CASCADE, related_name='reviews', null=True, blank=True)
-    rating = models.PositiveIntegerField(default=1, choices=[(i, str(i)) for i in range(1, 6)])
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    machinery = models.ForeignKey(MachineryListing, null=True, blank=True, on_delete=models.CASCADE)
+    operator = models.ForeignKey(OperatorListing, null=True, blank=True, on_delete=models.CASCADE)
+    rating = models.IntegerField()
     comment = models.TextField()
 
-    def clean(self):
-        # Custom validation to ensure either an operator or machinery is provided
-        if not self.operator and not self.machinery:
-            raise ValidationError("A review must be associated with either an operator or machinery.")
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
 
     def __str__(self):
-        return f"Review by {self.user.username} for {self.operator if self.operator else self.machinery}"
+        return f"Review by {self.user.username}"

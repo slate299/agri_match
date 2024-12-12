@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Add Review for {{ listing.make }} {{ listing.model }}</h2>
+
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-outline-success">Submit Review</button>
+</form>
+
+{% endblock %}

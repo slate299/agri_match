@@ -3,6 +3,7 @@ from .models import (MachineryListing, OperatorListing, Wishlist, RentalTransact
                      CustomUser, MachineryCategory, MachineryType)
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import Group
+from django.contrib.contenttypes.models import ContentType
 
 # Custom User Registration Form (Sign Up)
 class CustomUserCreationForm(UserCreationForm):
@@ -135,15 +136,25 @@ class RentalTransactionForm(forms.ModelForm):
         return transaction
 
 
-# Review Form (For Users to Leave Reviews)
 class ReviewForm(forms.ModelForm):
     class Meta:
         model = Review
-        fields = ['operator', 'machinery', 'rating', 'comment']
+        fields = ['rating', 'comment', 'content_type', 'object_id']  # Include relevant fields for GenericForeignKey
         widgets = {
             'rating': forms.RadioSelect(),
             'comment': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Write your review here...'})
         }
+
+    def __init__(self, *args, **kwargs):
+        content_object = kwargs.pop('content_object', None)
+        super().__init__(*args, **kwargs)
+
+        if content_object:
+            # Set content_type and object_id dynamically based on the content_object passed
+            content_type = ContentType.objects.get_for_model(content_object)
+            self.fields['content_type'].initial = content_type
+            self.fields['object_id'].initial = content_object.id
+
     def save(self, commit=True):
         review = super().save(commit=False)
         review.user = self.instance.user  # Associate with the current logged-in user
