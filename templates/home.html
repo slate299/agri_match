@@ -3,8 +3,8 @@
 
 {% block content %}
 <!-- Hero Section -->
-<div class="jumbotron text-center bg-success text-white py-5">
-    <img src="{% static 'images/logo.png' %}" alt="Agri-Match Logo" width="200">
+<div class="jumbotron text-center bg-success text-white py-5" style="background-image: url('{% static 'images/hero_bg.jpg' %}'); background-size: cover; background-position: center;">
+    <img src="{% static 'images/logo.png' %}" alt="Agri-Match Logo" width="200" class="mb-3">
     <h1 class="display-4 font-weight-bold">Welcome to Agri-Match</h1>
     <p class="lead mb-4">Empowering farmers and operators by connecting them with the tools, services, and expertise they need to succeed.</p>
     <hr class="my-4">
@@ -69,7 +69,7 @@
         <div class="row">
             {% for listing in listings|slice:":3" %}
                 <div class="col-md-4 mb-4">
-                    <div class="card shadow-lg">
+                    <div class="card shadow-lg border-0 hover-shadow">
                         {% if listing.image %}
                             <img src="{{ listing.image.url }}" class="card-img-top" alt="Listing Image">
                         {% else %}
@@ -79,8 +79,6 @@
                             <h5 class="card-title">{{ listing.title }}</h5>
                             <p class="card-text">{{ listing.description|truncatewords:20 }}</p>
                             <p class="card-text"><strong>Price:</strong> KSh {{ listing.price }}</p>
-{#                            <a href="{% url 'rent_item' listing.id %}" class="btn btn-outline-success">Rent Now</a>#}
-                            <!-- Link to the detail page -->
                             <a href="{% url 'machinery_listing_detail' listing.id %}" class="btn btn-info">View Details</a>
 
                             <!-- Add to Wishlist Form -->
@@ -145,7 +143,7 @@
                 <div class="card shadow-sm">
                     <div class="card-body">
                         <p class="card-text">"Agri-Match helped me find the perfect tractor for my farm at an affordable price. Highly recommended!"</p>
-                        <footer class="blockquote-footer">John Doe, Farmer</footer>
+                        <footer class="blockquote-footer">Samuel Karanja, Farmer</footer>
                     </div>
                 </div>
             </div>
@@ -153,7 +151,7 @@
                 <div class="card shadow-sm">
                     <div class="card-body">
                         <p class="card-text">"The platform made it so easy to hire experienced operators. My farm is running smoother than ever!"</p>
-                        <footer class="blockquote-footer">Jane Smith, Farm Manager</footer>
+                        <footer class="blockquote-footer">Cynthia Murugi, Farm Manager</footer>
                     </div>
                 </div>
             </div>
@@ -161,7 +159,7 @@
                 <div class="card shadow-sm">
                     <div class="card-body">
                         <p class="card-text">"A game changer for connecting local farmers with the tools and services they need to succeed."</p>
-                        <footer class="blockquote-footer">Mike Johnson, Equipment Owner</footer>
+                        <footer class="blockquote-footer">Johnson Kamau, Equipment Owner</footer>
                     </div>
                 </div>
             </div>

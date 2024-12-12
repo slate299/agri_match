@@ -71,7 +71,7 @@ class MachineryListing(models.Model):
         return f"{self.make} {self.model} ({self.category.name})"
 
 
-# Operator Listing Model
+# Operator Listing Model (Updated)
 class OperatorListing(models.Model):
     name = models.CharField(max_length=255)
     bio = models.TextField()
@@ -80,14 +80,23 @@ class OperatorListing(models.Model):
     available_from = models.DateField()
     available_to = models.DateField()
     profile_picture = models.ImageField(upload_to='operators/', blank=True, null=True)
+    phone_number = models.CharField(max_length=15, blank=True, null=True)  # Contact details field
+    email = models.EmailField(max_length=255, blank=True, null=True)  # Contact details field
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='operator_listings')
 
     def clean(self):
         if self.available_to and self.available_from and self.available_to < self.available_from:
             raise ValidationError("Available to date must be after available from date.")
 
+    def save(self, *args, **kwargs):
+        # Automatically assign the user if not already set
+        if not self.user:
+            raise ValidationError("User must be assigned to the listing")
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.name
+
 
 
 # Wishlist Model
@@ -123,7 +132,7 @@ class RentalTransaction(models.Model):
 class Review(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     machinery = models.ForeignKey(MachineryListing, null=True, blank=True, on_delete=models.CASCADE)
-    operator = models.ForeignKey(OperatorListing, null=True, blank=True, on_delete=models.CASCADE)
+    operator = models.ForeignKey(OperatorListing, null=True, blank=True, on_delete=models.CASCADE, related_name="reviews")
     rating = models.IntegerField()
     comment = models.TextField()
 

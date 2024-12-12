@@ -1,9 +1,12 @@
 from django import forms
 from .models import (MachineryListing, OperatorListing, Wishlist, RentalTransaction, Review,
                      CustomUser, MachineryCategory, MachineryType)
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ValidationError
+from django.core.validators import RegexValidator
+
 
 # Custom User Registration Form (Sign Up)
 class CustomUserCreationForm(UserCreationForm):
@@ -95,16 +98,88 @@ class MachineryListingForm(forms.ModelForm):
 
 # Operator Listing Form (For Listers to Add Operators)
 class OperatorListingForm(forms.ModelForm):
+    name = forms.CharField(
+        max_length=255,
+        label="Operator's Full Name",
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        required=True
+    )
+
+    bio = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Provide a brief bio of the operator'}),
+        required=True,
+        label="Bio"
+    )
+
+    certification = forms.CharField(
+        max_length=255,
+        label="Certification",
+        widget=forms.TextInput(
+            attrs={'class': 'form-control', 'placeholder': 'List any certifications held by the operator'}),
+        required=False
+    )
+
+    hourly_rate = forms.DecimalField(
+        label="Hourly Rate",
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'step': '0.01'}),
+        required=True
+    )
+
+    phone_number = forms.CharField(
+        max_length=15,
+        label="Phone Number",
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        required=False,
+        validators=[RegexValidator(regex=r'^\+?\d{10,15}$', message='Phone number must be valid.')],
+    )
+
+    email = forms.EmailField(
+        label="Email Address",
+        widget=forms.EmailInput(attrs={'class': 'form-control'}),
+        required=False
+    )
+
+    available_from = forms.DateField(
+        label="Available From",
+        widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+        required=True
+    )
+
+    available_to = forms.DateField(
+        label="Available To",
+        widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+        required=True
+    )
+
+    profile_picture = forms.ImageField(
+        label="Profile Picture",
+        required=False,
+        widget=forms.ClearableFileInput(attrs={'class': 'form-control-file'})
+    )
+
     class Meta:
         model = OperatorListing
-        fields = ['name', 'bio', 'certification', 'hourly_rate', 'available_from', 'available_to', 'profile_picture']
+        fields = ['name', 'bio', 'certification', 'hourly_rate', 'available_from', 'available_to', 'profile_picture',
+                  'phone_number', 'email']
 
     def save(self, commit=True):
         operator = super().save(commit=False)
-        operator.user = self.instance.user  # Associate with the current logged-in user
+        # Associate with the current logged-in user
+        operator.user = self.instance.user
         if commit:
             operator.save()
         return operator
+
+    def clean(self):
+        cleaned_data = super().clean()
+        available_from = cleaned_data.get("available_from")
+        available_to = cleaned_data.get("available_to")
+
+        if available_from and available_to and available_from > available_to:
+            raise ValidationError("Available From date cannot be later than Available To date.")
+
+        return cleaned_data
+
 
 
 # Wishlist Form (For Users to Save Items to Wishlist)

@@ -71,19 +71,32 @@ def create_machinery_listing(request):
     return render(request, 'create_machinery_listing.html', {'form': form})
 
 
-# Create operator listing
 @login_required
 def create_operator_listing(request):
+    # Restrict access to specific groups
     if not request.user.groups.filter(name__in=["Operator Lister", "Admin"]).exists():
         return HttpResponseForbidden('You do not have permission to create an operator listing.')
 
     if request.method == 'POST':
         form = OperatorListingForm(request.POST, request.FILES)
         if form.is_valid():
+            # Save the form but do not commit to database yet
             operator = form.save(commit=False)
+
+            # Assign the logged-in user to the operator listing
             operator.user = request.user
+
+            # Save the instance to the database
             operator.save()
-            return redirect('home')
+
+            # Add a success message to inform the user of the successful listing creation
+            messages.success(request, "Operator listing created successfully!")
+
+            return redirect('home')  # Redirect to home page after successful creation
+        else:
+            # Optionally, you can display form errors in the template
+            print(f"Form errors: {form.errors}")  # This is for debugging, can be removed in production
+
     else:
         form = OperatorListingForm()
 
