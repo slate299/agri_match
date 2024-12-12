@@ -165,7 +165,7 @@ class OperatorListingForm(forms.ModelForm):
     def save(self, commit=True):
         operator = super().save(commit=False)
         # Associate with the current logged-in user
-        operator.user = self.instance.user
+        operator.user = self.initial.get('user')
         if commit:
             operator.save()
         return operator
