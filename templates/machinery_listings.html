@@ -10,7 +10,7 @@
         <div class="col-md-4 mb-4">
             <div class="card shadow-sm">
                 <!-- If the listing has an image, display it, else display a default image -->
-                <img src="{% if item.image %}{{ item.image.url }}{% else %}{% static 'images/default_image.png' %}{% endif %}" class="card-img-top" alt="Listing Image" width="">
+                <img src="{% if listing.image %}{{ listing.image.url }}{% else %}{% static 'images/default_image.png' %}{% endif %}" class="card-img-top" alt="Listing Image" width="">
                 <div class="card-body">
                     <h5 class="card-title text-success">{{ listing.make }} {{ listing.model }}</h5>
                     <p class="card-text">{{ listing.description|truncatewords:20 }}</p>
@@ -29,7 +29,7 @@
                         </form>
 
                         <!-- Link to submit a review -->
-                        <a href="{% url 'submit_review' listing.id 'machinery' %}" class="btn btn-outline-warning">Add Review</a>
+                        <a href="{% url 'add_machinery_review' listing.id %}" class="btn btn-outline-warning">Add Review</a>
                     </div>
                 </div>
             </div>

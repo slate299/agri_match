@@ -23,12 +23,13 @@ urlpatterns = [
     path('operator/<int:listing_id>/', views.operator_listing_details, name='operator_listing_details'),
     # Add to wishlist
     path('add_to_wishlist/<int:listing_id>/', views.add_to_wishlist, name='add_to_wishlist'),
-    path('remove_from_wishlist/<int:item_id>/', views.remove_from_wishlist, name='remove_from_wishlist'),
+    path('remove_from_wishlist/<int:listing_id>/', views.remove_from_wishlist, name='remove_from_wishlist'),
     # Wishlist view
     path('wishlist/', views.wishlist, name='wishlist'),
 
     # Rent or hire machinery or operators
     path('rent-item/<int:listing_id>/', views.rent_or_hire, name='rent_item'),
+    path('rental-success/', views.rental_success, name='rental_success'),
     path('get-machinery-types/<int:category_id>/', views.get_machinery_types, name='get_machinery_types'),
     # Reviews
     path('machinery/<int:listing_id>/review/', views.add_review, {'listing_type': 'machinery'}, name='add_machinery_review'),

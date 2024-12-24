@@ -41,7 +41,7 @@
                     {% if existing_review %}
                         <p>You have already submitted a review for this operator.</p>
                     {% else %}
-                        <form method="POST" action="{% url 'submit_review' listing_id=operator_listing.id listing_type='operator' %}">
+                        <form method="POST" action="{% url 'add_operator_review' listing_id=operator_listing.id  %}">
                             {% csrf_token %}
                             <div class="form-group">
                                 <label for="rating">Rating</label>
@@ -65,7 +65,7 @@
                     {% endif %}
                 </div>
             {% else %}
-                <p>Please <a href="{% url 'login' %}">log in</a> to submit a review.</p>
+                <p>Please <a href="{% url 'account_login' %}">log in</a> to submit a review.</p>
             {% endif %}
         </div>
     </div>

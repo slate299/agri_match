@@ -216,11 +216,12 @@ class ReviewForm(forms.ModelForm):
         model = Review
         fields = ['rating', 'comment', 'content_type', 'object_id']  # Include relevant fields for GenericForeignKey
         widgets = {
-            'rating': forms.RadioSelect(),
+            'rating': forms.Select(choices=[(1, '1 Star'), (2, '2 Stars'), (3, '3 Stars'), (4, '4 Stars'), (5, '5 Stars')]),
             'comment': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Write your review here...'})
         }
 
     def __init__(self, *args, **kwargs):
+        self.user = None
         content_object = kwargs.pop('content_object', None)
         super().__init__(*args, **kwargs)
 
@@ -232,7 +233,7 @@ class ReviewForm(forms.ModelForm):
 
     def save(self, commit=True):
         review = super().save(commit=False)
-        review.user = self.instance.user  # Associate with the current logged-in user
+        review.user = self.user  # Associate with the current logged-in user
         if commit:
             review.save()
         return review

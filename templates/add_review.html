@@ -6,6 +6,14 @@
 <form method="POST">
     {% csrf_token %}
     {{ form.as_p }}
+{#    <div class="form-group">#}
+{#        <label for="{{ form.rating.id_for_label }}">Rating (1 to 5):</label>#}
+{#        <div>{{ form.rating }}</div>#}
+{#    </div>#}
+{#    <div class="form-group">#}
+{#        <label for="{{ form.comment.id_for_label }}">Comment:</label>#}
+{#        <div>{{ form.comment }}</div>#}
+{#    </div>#}
     <button type="submit" class="btn btn-outline-success">Submit Review</button>
 </form>
 

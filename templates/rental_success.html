@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container text-center mt-5">
+    <div class="card shadow-sm p-4">
+        <h2 class="text-success mb-4">🎉 Success!</h2>
+        <p>Your rental request has been submitted successfully.</p>
+        <p>We’ll notify you once it has been processed. Thank you for choosing Agri-Match!</p>
+        
+        <div class="mt-4">
+            <a href="{% url 'machinery_listings' %}" class="btn btn-primary">Browse More Listings</a>
+            <a href="{% url 'wishlist' %}" class="btn btn-warning">View Wishlist</a>
+            <a href="{% url 'home' %}" class="btn btn-secondary">Return to Home</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

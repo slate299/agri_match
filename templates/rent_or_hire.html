@@ -2,38 +2,47 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h2>Rent or Hire {{ listing.title }}</h2>
+    <!-- Title Section -->
+    <div class="text-center mb-4">
+        <h2 class="font-weight-bold">Rent or Hire {{ listing.title }}</h2>
+        <p class="lead">Are you interested in renting this machinery or hiring this operator? Please provide the necessary details below.</p>
+    </div>
 
-    <p>Are you interested in renting this machinery or hiring this operator? Please provide the necessary details below.</p>
+    <!-- Form Section -->
+    <div class="card shadow-lg p-4">
+        <form method="POST">
+            {% csrf_token %}
 
-    <form method="POST">
-        {% csrf_token %}
-        
-        <div class="form-group">
-            <label for="start_date">Start Date</label>
-            <input type="date" name="start_date" id="start_date" class="form-control" required>
-        </div>
+            <!-- Start Date -->
+            <div class="form-group">
+                <label for="start_date">Start Date</label>
+                <input type="date" name="start_date" id="start_date" class="form-control" required>
+            </div>
 
-        <div class="form-group">
-            <label for="end_date">End Date</label>
-            <input type="date" name="end_date" id="end_date" class="form-control" required>
-        </div>
+            <!-- End Date -->
+            <div class="form-group">
+                <label for="end_date">End Date</label>
+                <input type="date" name="end_date" id="end_date" class="form-control" required>
+            </div>
 
-        <div class="form-group">
-            <label for="total_amount">Total Amount</label>
-            <input type="text" name="total_amount" id="total_amount" class="form-control" value="Ksh {{ listing.price_per_day }}" readonly>
-        </div>
+            <!-- Total Amount -->
+            <div class="form-group">
+                <label for="total_amount">Total Amount</label>
+                <input type="text" name="total_amount" id="total_amount" class="form-control" value="Ksh {{ listing.price_per_day }}" readonly>
+            </div>
 
-        <button type="submit" class="btn btn-success mt-3">Confirm Rental</button>
-    </form>
+            <button type="submit" class="btn btn-success btn-block mt-3">Confirm Rental</button>
+        </form>
+    </div>
+
+    <!-- Listing Details Section -->
+    {% if listing %}
+    <div class="mt-4 card p-3 shadow-sm">
+        <h4 class="font-weight-bold">Listing Details</h4>
+        <p><strong>Title:</strong> {{ listing.title }}</p>
+        <p><strong>Description:</strong> {{ listing.description }}</p>
+        <p><strong>Price per Day:</strong> Ksh {{ listing.price_per_day }}</p>
+    </div>
+    {% endif %}
 </div>
-
-{% if listing %}
-<div class="mt-4">
-    <h4>Details of the Listing:</h4>
-    <p><strong>Title:</strong> {{ listing.title }}</p>
-    <p><strong>Description:</strong> {{ listing.description }}</p>
-    <p><strong>Price per Day:</strong> Ksh {{ listing.price_per_day }}</p>
-</div>
-{% endif %}
 {% endblock %}

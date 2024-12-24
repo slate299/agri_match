@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseForbidden, JsonResponse
 from django.contrib.auth.decorators import login_required
 from .models import CustomUser, MachineryListing, OperatorListing, Wishlist, RentalTransaction, Review, MachineryCategory, \
     MachineryType
@@ -9,6 +9,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib import messages
 from django.db.models import Avg
+from datetime import datetime
 from django.contrib.contenttypes.models import ContentType
 from .signals import assign_user_group
 
@@ -128,23 +129,32 @@ def wishlist(request):
     return render(request, 'wishlist.html', {'wishlist': machinery_in_wishlist})
 
 
-# Rent machinery or hire operator (only for logged-in users)
 @login_required
 def rent_or_hire(request, listing_id):
     listing = get_object_or_404(MachineryListing, pk=listing_id)
     if request.method == 'POST':
-        start_date = request.POST['start_date']
-        end_date = request.POST['end_date']
+        # Parse dates from the POST request
+        try:
+            start_date = datetime.strptime(request.POST['start_date'], '%Y-%m-%d').date()
+            end_date = datetime.strptime(request.POST['end_date'], '%Y-%m-%d').date()
+        except ValueError:
+            messages.error(request, "Invalid date format. Please use YYYY-MM-DD.")
+            return redirect('rent_or_hire', listing_id=listing_id)
+
+        # Validate date range
         if start_date > end_date:
             messages.error(request, "The rental start date cannot be after the end date.")
             return redirect('rent_or_hire', listing_id=listing_id)
 
+        # Calculate rental period and total amount
         rental_days = (end_date - start_date).days
         if rental_days < 1:
             messages.error(request, "The rental period must be at least one day.")
             return redirect('rent_or_hire', listing_id=listing_id)
 
         total_amount = listing.price_per_day * rental_days
+
+        # Create a rental transaction
         RentalTransaction.objects.create(
             user=request.user,
             machinery=listing,
@@ -152,9 +162,15 @@ def rent_or_hire(request, listing_id):
             rental_end_date=end_date,
             total_amount=total_amount
         )
-        return HttpResponse('Rental request submitted')
+
+        # Success message or response
+        messages.success(request, "Rental request submitted successfully.")
+        return redirect('rental_success')  # Redirect to the success page by its URL name
+
     return render(request, 'rent_or_hire.html', {'listing': listing})
 
+def rental_success(request):
+    return render(request, 'rental_success.html')
 
 # Machinery Listing Detail View
 def machinery_listing_detail(request, id):
@@ -206,17 +222,34 @@ def add_review(request, listing_id, listing_type):
     existing_review = Review.objects.filter(user=request.user, content_type=content_type, object_id=listing.id).first()
 
     if existing_review:
-        return redirect('listing_details', listing_id=listing.id, listing_type=listing_type)  # Redirect if already reviewed
+        return redirect('machinery_listing_detail', id=listing.id) if listing_type == 'machinery' else redirect('operator_listing_detail', id=listing.id)
 
     # Handle form submission
     if request.method == 'POST':
         form = ReviewForm(request.POST, content_object=listing)
         if form.is_valid():
-            # Create and save the review
-            form.save(commit=False)  # The save method now properly associates the user and content type
-            form.instance.user = request.user
-            form.save()
-            return redirect('listing_details', listing_id=listing.id, listing_type=listing_type)
+            # Save the form but do not commit to database yet
+            review = form.save(commit=False)
+
+            # Manually assign the user to the review
+            review.user = request.user
+
+            # Assign content_type and object_id to the review
+            review.content_type = content_type
+            review.object_id = listing.id
+
+            # Save the review instance to the database
+            review.save()
+
+            # Add a success message to inform the user of the successful review submission
+            messages.success(request, "Review submitted successfully!")
+
+            # Redirect to the listing details page after submission
+            return redirect('machinery_listing_detail', id=listing.id) if listing_type == 'machinery' else redirect('operator_listing_detail', id=listing.id)
+
+        else:
+            # Optionally, you can print errors if form is invalid
+            print("Form errors:", form.errors)
     else:
         form = ReviewForm(content_object=listing)
 
@@ -224,6 +257,7 @@ def add_review(request, listing_id, listing_type):
         'form': form,
         'listing': listing,
     })
+
 
 
 # Machinery Listing View
@@ -245,6 +279,7 @@ def machinery_listings(request):
 # Operator Listing View
 def operator_listings(request):
     operator_list = OperatorListing.objects.all()
+    print(operator_list)
     paginator = Paginator(operator_list, 9)
     page = request.GET.get('page')
 
@@ -284,11 +319,12 @@ def remove_from_wishlist(request, listing_id):
 # Function to fetch machinery types based on the selected category
 def get_machinery_types(request, category_id):
     # Get the selected category object
-    category = MachineryCategory.objects.get(id=category_id)
+    category = get_object_or_404(MachineryCategory, id=category_id)
     # Get the associated machinery types
     machinery_types = MachineryType.objects.filter(category=category)
-    # Return the machinery types as a response or pass them to the template
-    return render(request, 'create_machinery_listing.html', {'machinery_types': machinery_types})
+    # Serialize the machinery types to send to the template
+    types_data = list(machinery_types.values('id', 'name'))
+    return JsonResponse({'types': types_data})  # Changed key to 'types'
 
 @login_required
 def register_role(request):

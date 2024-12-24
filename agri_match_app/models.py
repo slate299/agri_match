@@ -141,4 +141,5 @@ class Review(models.Model):
     content_object = GenericForeignKey('content_type', 'object_id')
 
     def __str__(self):
-        return f"Review by {self.user.username}"
+        return f"Review by {self.user.username} for {self.content_type.model} {self.object_id}"
+
